@@ -11,6 +11,17 @@ export interface UploadProgress {
   percent: number;
 }
 
+async function getAuthToken(): Promise<string> {
+  const { data } = await supabase.auth.getSession();
+  if (data.session?.access_token) return data.session.access_token;
+  // No session — sign in anonymously so we get a real JWT for tus uploads.
+  const { data: anon, error } = await supabase.auth.signInAnonymously();
+  if (error || !anon.session?.access_token) {
+    throw new Error(error?.message ?? "Could not establish upload session");
+  }
+  return anon.session.access_token;
+}
+
 export async function uploadFileResumable(opts: {
   file: File;
   bucket: string;
@@ -18,10 +29,8 @@ export async function uploadFileResumable(opts: {
   onProgress?: (p: { bytesUploaded: number; bytesTotal: number }) => void;
 }): Promise<void> {
   const { file, bucket, objectPath, onProgress } = opts;
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token =
-    sessionData.session?.access_token ??
-    (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string);
+  const token = await getAuthToken();
+  void SUPABASE_URL;
 
   return new Promise((resolve, reject) => {
     const upload = new tus.Upload(file, {
