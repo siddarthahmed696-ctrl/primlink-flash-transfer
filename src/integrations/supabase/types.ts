@@ -14,7 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      transfer_files: {
+        Row: {
+          content_type: string | null
+          created_at: string
+          file_name: string
+          file_size: number
+          id: string
+          storage_path: string
+          transfer_id: string
+        }
+        Insert: {
+          content_type?: string | null
+          created_at?: string
+          file_name: string
+          file_size: number
+          id?: string
+          storage_path: string
+          transfer_id: string
+        }
+        Update: {
+          content_type?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          id?: string
+          storage_path?: string
+          transfer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transfer_files_transfer_id_fkey"
+            columns: ["transfer_id"]
+            isOneToOne: false
+            referencedRelation: "transfers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transfers: {
+        Row: {
+          created_at: string
+          download_count: number
+          expires_at: string
+          id: string
+          message: string | null
+          recipient_email: string | null
+          sender_email: string | null
+          share_code: string
+          title: string | null
+          total_size: number
+        }
+        Insert: {
+          created_at?: string
+          download_count?: number
+          expires_at?: string
+          id?: string
+          message?: string | null
+          recipient_email?: string | null
+          sender_email?: string | null
+          share_code?: string
+          title?: string | null
+          total_size?: number
+        }
+        Update: {
+          created_at?: string
+          download_count?: number
+          expires_at?: string
+          id?: string
+          message?: string | null
+          recipient_email?: string | null
+          sender_email?: string | null
+          share_code?: string
+          title?: string | null
+          total_size?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
