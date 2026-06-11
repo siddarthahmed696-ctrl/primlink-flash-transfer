@@ -71,6 +71,7 @@ export const Route = createFileRoute("/d/$code")({
 
 function DownloadPage() {
   const { code } = Route.useParams();
+  const fetchDownloadUrl = useServerFn(getDownloadUrl);
   const [transfer, setTransfer] = useState<TransferRow | null>(null);
   const [files, setFiles] = useState<FileRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,36 +80,35 @@ function DownloadPage() {
 
   useEffect(() => {
     (async () => {
-      const { data: t } = await supabase
-        .from("transfers")
-        .select("*")
-        .eq("share_code", code)
-        .maybeSingle();
-      if (!t) {
+      const { data: t } = await supabase.rpc("get_transfer_by_code", {
+        _code: code,
+      } as never);
+      const row = (Array.isArray(t) ? t[0] : t) as TransferRow | null;
+      if (!row) {
         setLoading(false);
         return;
       }
-      setTransfer(t as TransferRow);
-      const { data: f } = await supabase
-        .from("transfer_files")
-        .select("*")
-        .eq("transfer_id", t.id)
-        .order("created_at");
-      setFiles((f ?? []) as FileRow[]);
+      setTransfer(row);
+      const { data: f } = await supabase.rpc("get_transfer_files_by_code", {
+        _code: code,
+      } as never);
+      setFiles(((f ?? []) as unknown) as FileRow[]);
       setLoading(false);
     })();
   }, [code]);
 
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
+  const bumpCounter = async () => {
+    if (!transfer) return;
+    await supabase.rpc("increment_download_count", { _code: code } as never);
+  };
+
   const downloadOne = async (f: FileRow) => {
     setDownloadingId(f.id);
     try {
-      const { data, error } = await supabase.storage
-        .from("transfers")
-        .createSignedUrl(f.storage_path, 60 * 10, { download: f.file_name });
-      if (error || !data?.signedUrl) throw error ?? new Error("no url");
-      window.location.href = data.signedUrl;
+      const { url } = await fetchDownloadUrl({ data: { code, fileId: f.id } });
+      window.location.href = url;
       bumpCounter();
     } catch (e) {
       console.error(e);
@@ -122,17 +122,17 @@ function DownloadPage() {
     setDownloadingAll(true);
     try {
       for (const f of files) {
-        const { data } = await supabase.storage
-          .from("transfers")
-          .createSignedUrl(f.storage_path, 60 * 10, { download: f.file_name });
-        if (data?.signedUrl) {
+        try {
+          const { url } = await fetchDownloadUrl({ data: { code, fileId: f.id } });
           const a = document.createElement("a");
-          a.href = data.signedUrl;
+          a.href = url;
           a.download = f.file_name;
           document.body.appendChild(a);
           a.click();
           a.remove();
           await new Promise((r) => setTimeout(r, 400));
+        } catch (e) {
+          console.error(e);
         }
       }
       bumpCounter();
@@ -141,13 +141,6 @@ function DownloadPage() {
     }
   };
 
-  const bumpCounter = async () => {
-    if (!transfer) return;
-    await supabase
-      .from("transfers")
-      .update({ download_count: transfer.download_count + 1 })
-      .eq("id", transfer.id);
-  };
 
   if (loading) {
     return (
