@@ -94,7 +94,7 @@ function HomePage() {
         _sender_email: sender || null,
         _recipient_email: recipient || null,
         _total_size: totalBytes,
-      });
+      } as never);
       const transfer = (Array.isArray(created) ? created[0] : created) as
         | { id: string; share_code: string }
         | null;
