@@ -1,13 +1,23 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Zap, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getDownloadUrl } from "@/lib/downloads.functions";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { toast } from "sonner";
 
 interface TransferRow {
   id: string;
   share_code: string;
+  title: string | null;
+  message: string | null;
+  sender_email: string | null;
+  total_size: number;
+  download_count: number;
+  created_at: string;
+  expires_at: string;
+}
   title: string | null;
   message: string | null;
   sender_email: string | null;
