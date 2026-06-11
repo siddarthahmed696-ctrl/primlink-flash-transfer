@@ -140,13 +140,11 @@ function HomePage() {
 
       // Always use the stable public domain so recipients never hit
       // the Lovable preview login wall.
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const host = window.location.host;
       const isPreview = host.includes("id-preview--") || host.includes("lovableproject.com");
       const base = isPreview
-        ? `https://project--cabfec49-2cad-441f-889e-a154237ea53e.lovable.app`
+        ? `https://primlink-flash-transfer.lovable.app`
         : window.location.origin;
-      void projectId;
       const url = `${base}/d/${transfer.share_code}`;
       setShareUrl(url);
 
