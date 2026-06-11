@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DCodeRouteImport } from './routes/d.$code'
+import { Route as AlternativesWetransferRouteImport } from './routes/alternatives.wetransfer'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const DCodeRoute = DCodeRouteImport.update({
   path: '/d/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlternativesWetransferRoute = AlternativesWetransferRouteImport.update({
+  id: '/alternatives/wetransfer',
+  path: '/alternatives/wetransfer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/d/$code'
+  fullPaths: '/' | '/alternatives/wetransfer' | '/d/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/d/$code'
-  id: '__root__' | '/' | '/d/$code'
+  to: '/' | '/alternatives/wetransfer' | '/d/$code'
+  id: '__root__' | '/' | '/alternatives/wetransfer' | '/d/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlternativesWetransferRoute: typeof AlternativesWetransferRoute
   DCodeRoute: typeof DCodeRoute
 }
 
@@ -65,13 +75,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/alternatives/wetransfer': {
+      id: '/alternatives/wetransfer'
+      path: '/alternatives/wetransfer'
+      fullPath: '/alternatives/wetransfer'
+      preLoaderRoute: typeof AlternativesWetransferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlternativesWetransferRoute: AlternativesWetransferRoute,
   DCodeRoute: DCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
