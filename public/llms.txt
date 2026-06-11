@@ -1,0 +1,8 @@
+# Primlink Transfer
+
+> Free, fast, worldwide file transfers — upload up to 10 GB and share a download link with anyone, no account required.
+
+## Pages
+
+- [Home](/): Upload files, get a share link, and send files to anyone in seconds.
+- [Download](/d/example): Recipients open a share link to download files directly — no signup needed.
