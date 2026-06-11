@@ -18,20 +18,11 @@ interface TransferRow {
   created_at: string;
   expires_at: string;
 }
-  title: string | null;
-  message: string | null;
-  sender_email: string | null;
-  total_size: number;
-  download_count: number;
-  created_at: string;
-  expires_at: string;
-}
 interface FileRow {
   id: string;
   file_name: string;
   file_size: number;
   content_type: string | null;
-  storage_path: string;
 }
 
 export const Route = createFileRoute("/d/$code")({
