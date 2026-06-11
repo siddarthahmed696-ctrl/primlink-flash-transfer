@@ -96,7 +96,47 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_transfer_files: {
+        Args: { _files: Json; _transfer_id: string }
+        Returns: undefined
+      }
+      create_transfer: {
+        Args: {
+          _message: string
+          _recipient_email: string
+          _sender_email: string
+          _title: string
+          _total_size: number
+        }
+        Returns: {
+          id: string
+          share_code: string
+        }[]
+      }
+      get_transfer_by_code: {
+        Args: { _code: string }
+        Returns: {
+          created_at: string
+          download_count: number
+          expires_at: string
+          id: string
+          message: string
+          sender_email: string
+          share_code: string
+          title: string
+          total_size: number
+        }[]
+      }
+      get_transfer_files_by_code: {
+        Args: { _code: string }
+        Returns: {
+          content_type: string
+          file_name: string
+          file_size: number
+          id: string
+        }[]
+      }
+      increment_download_count: { Args: { _code: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

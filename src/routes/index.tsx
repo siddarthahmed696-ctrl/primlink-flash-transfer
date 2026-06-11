@@ -87,23 +87,21 @@ function HomePage() {
     setProgress(files.map((f) => ({ name: f.name, size: f.size, sent: 0 })));
 
     try {
-      // 1) Create the transfer row
-      const { data: transfer, error: tErr } = await supabase
-        .from("transfers")
-        .insert({
-          title: title || null,
-          message: message || null,
-          sender_email: sender || null,
-          recipient_email: recipient || null,
-          total_size: totalBytes,
-        })
-        .select("id, share_code")
-        .single();
+      // 1) Create the transfer row via security-definer RPC
+      const { data: created, error: tErr } = await supabase.rpc("create_transfer", {
+        _title: title || null,
+        _message: message || null,
+        _sender_email: sender || null,
+        _recipient_email: recipient || null,
+        _total_size: totalBytes,
+      } as never);
+      const transfer = (Array.isArray(created) ? created[0] : created) as
+        | { id: string; share_code: string }
+        | null;
       if (tErr || !transfer) throw tErr ?? new Error("Could not create transfer");
 
       // 2) Upload each file via resumable tus
       const rows: Array<{
-        transfer_id: string;
         file_name: string;
         file_size: number;
         content_type: string | null;
@@ -126,7 +124,6 @@ function HomePage() {
             }),
         });
         rows.push({
-          transfer_id: transfer.id,
           file_name: file.name,
           file_size: file.size,
           content_type: file.type || null,
@@ -134,8 +131,12 @@ function HomePage() {
         });
       }
 
-      // 3) Save file rows
-      const { error: fErr } = await supabase.from("transfer_files").insert(rows);
+      // 3) Save file rows via RPC (validates the transfer exists, never
+      // exposes storage paths to the client SELECT surface).
+      const { error: fErr } = await supabase.rpc("add_transfer_files", {
+        _transfer_id: transfer.id,
+        _files: rows,
+      });
       if (fErr) throw fErr;
 
       // Always use the stable public domain so recipients never hit
