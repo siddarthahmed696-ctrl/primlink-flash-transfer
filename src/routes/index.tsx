@@ -8,8 +8,6 @@ import {
   Check,
   Loader2,
   Send,
-  ExternalLink,
-  Sparkles,
   Plus,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +15,9 @@ import { uploadFileResumable } from "@/lib/upload";
 import { formatBytes } from "@/lib/format";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { AdBackdrop, useAdRotator } from "@/components/ad-rotator";
+import { IntroSplash } from "@/components/intro-splash";
+import { CookieBanner } from "@/components/cookie-banner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,11 +39,11 @@ export const Route = createFileRoute("/")({
 });
 
 const MAX_BYTES = 10 * 1024 * 1024 * 1024;
-const PRIMLINK_URL = "https://primlink.com";
 
 type PerFileProgress = { name: string; size: number; sent: number };
 
 function HomePage() {
+  const ad = useAdRotator();
   const [files, setFiles] = useState<File[]>([]);
   const [recipient, setRecipient] = useState("");
   const [sender, setSender] = useState("");
@@ -153,241 +154,206 @@ function HomePage() {
     setTimeout(() => setCopied(false), 1800);
   };
 
+  // Stop link clicks inside the floating widget from triggering the ad redirect.
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background text-foreground">
-      <SiteHeader />
+    <div className="h-screen flex flex-col overflow-hidden text-foreground relative">
+      <IntroSplash />
+      <AdBackdrop ad={ad} />
 
-      <main className="relative flex-1 min-h-0">
-        {/* background */}
-        <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "var(--gradient-hero)" }}
-        />
+      <div className="relative z-10 flex flex-col h-full pointer-events-none">
+        <div className="pointer-events-auto">
+          <SiteHeader />
+        </div>
 
-        <div className="relative h-full mx-auto max-w-7xl px-4 sm:px-6 py-4 grid gap-4 lg:grid-cols-[380px_1fr]">
-          {/* Left: WeTransfer-style upload widget */}
-          <aside className="h-full min-h-0">
-            <div className="h-full rounded-2xl border border-border bg-card shadow-card overflow-hidden flex flex-col">
-              {!shareUrl ? (
-                <>
-                  <div className="px-5 pt-5 pb-3 border-b border-border">
-                    <div className="text-sm text-muted-foreground">Send up to</div>
-                    <div className="font-display text-2xl font-bold">10 GB free</div>
+        <main className="flex-1 min-h-0 relative">
+          {/* Floating send widget — WeTransfer-style, smaller and glass */}
+          <div
+            onClick={stop}
+            className="pointer-events-auto absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-[320px] max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border shadow-card backdrop-blur-2xl overflow-hidden animate-[ut_in_700ms_ease-out_both]"
+            style={{
+              background: `linear-gradient(180deg, ${ad.accent}22, rgba(10,10,10,0.55))`,
+              borderColor: `${ad.accent}55`,
+              boxShadow: `0 30px 80px -20px ${ad.accent}55, 0 0 0 1px ${ad.accent}22 inset`,
+            }}
+          >
+            {!shareUrl ? (
+              <>
+                <div className="px-4 pt-4 pb-2">
+                  <div className="text-[11px] uppercase tracking-widest text-white/60">
+                    Send up to
                   </div>
+                  <div className="font-display text-xl font-bold text-white">10 GB free</div>
+                </div>
 
-                  <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
-                    <div
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        setDragOver(true);
-                      }}
-                      onDragLeave={() => setDragOver(false)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        setDragOver(false);
-                        if (e.dataTransfer.files.length) onPickFiles(e.dataTransfer.files);
-                      }}
-                      onClick={() => inputRef.current?.click()}
-                      className={`cursor-pointer p-5 rounded-xl border-2 border-dashed transition-all ${
-                        dragOver
-                          ? "border-primary bg-primary/10"
-                          : "border-border hover:border-primary/60 hover:bg-surface-elevated"
-                      }`}
-                    >
-                      <input
-                        ref={inputRef}
-                        type="file"
-                        multiple
-                        className="hidden"
-                        onChange={(e) => e.target.files && onPickFiles(e.target.files)}
-                      />
-                      <div className="flex flex-col items-center text-center gap-2">
-                        <div className="size-11 rounded-full bg-primary/15 grid place-items-center text-primary">
-                          {files.length ? <Plus className="size-5" /> : <Upload className="size-5" />}
+                <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-2">
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragOver(true);
+                    }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragOver(false);
+                      if (e.dataTransfer.files.length) onPickFiles(e.dataTransfer.files);
+                    }}
+                    onClick={() => inputRef.current?.click()}
+                    className={`cursor-pointer p-3 rounded-xl border-2 border-dashed transition-all ${
+                      dragOver ? "bg-white/10" : "hover:bg-white/5"
+                    }`}
+                    style={{ borderColor: `${ad.accent}88` }}
+                  >
+                    <input
+                      ref={inputRef}
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => e.target.files && onPickFiles(e.target.files)}
+                    />
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="size-9 rounded-full grid place-items-center text-white shrink-0"
+                        style={{ background: ad.accent }}
+                      >
+                        {files.length ? <Plus className="size-4" /> : <Upload className="size-4" />}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-sm text-white">
+                          {files.length ? "Add more files" : "Add your files"}
                         </div>
-                        <div className="text-sm">
-                          <div className="font-semibold">
-                            {files.length ? "Add more files" : "Add your files"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            or drop them here
-                          </div>
-                        </div>
+                        <div className="text-[11px] text-white/60">or drop them here</div>
                       </div>
                     </div>
+                  </div>
 
-                    {files.length > 0 && (
-                      <div className="space-y-1.5">
-                        {files.map((f, i) => {
-                          const p = progress[i];
-                          const pct = p && p.size ? (p.sent / p.size) * 100 : 0;
-                          return (
-                            <div
-                              key={i}
-                              className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-1.5 border border-border"
-                            >
-                              <FileIcon className="size-3.5 text-primary shrink-0" />
-                              <div className="min-w-0 flex-1">
-                                <div className="flex justify-between text-xs">
-                                  <span className="truncate">{f.name}</span>
-                                  <span className="text-muted-foreground tabular-nums ml-2">
-                                    {formatBytes(f.size)}
-                                  </span>
-                                </div>
-                                {uploading && (
-                                  <div className="mt-1 h-0.5 bg-muted rounded overflow-hidden">
-                                    <div
-                                      className="h-full bg-primary transition-all"
-                                      style={{ width: `${pct}%` }}
-                                    />
-                                  </div>
-                                )}
+                  {files.length > 0 && (
+                    <div className="space-y-1">
+                      {files.map((f, i) => {
+                        const p = progress[i];
+                        const pct = p && p.size ? (p.sent / p.size) * 100 : 0;
+                        return (
+                          <div
+                            key={i}
+                            className="flex items-center gap-2 rounded-lg bg-black/30 px-2 py-1.5 border border-white/10"
+                          >
+                            <FileIcon className="size-3 text-white/70 shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <div className="flex justify-between text-[11px] text-white">
+                                <span className="truncate">{f.name}</span>
+                                <span className="text-white/60 tabular-nums ml-2">
+                                  {formatBytes(f.size)}
+                                </span>
                               </div>
-                              {!uploading && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    removeFile(i);
-                                  }}
-                                  className="text-muted-foreground hover:text-primary"
-                                  aria-label="Remove"
-                                >
-                                  <X className="size-3.5" />
-                                </button>
+                              {uploading && (
+                                <div className="mt-1 h-0.5 bg-white/10 rounded overflow-hidden">
+                                  <div
+                                    className="h-full transition-all"
+                                    style={{ width: `${pct}%`, background: ad.accent }}
+                                  />
+                                </div>
                               )}
                             </div>
-                          );
-                        })}
-                        <div className="text-[11px] text-muted-foreground text-right">
-                          {files.length} {files.length === 1 ? "file" : "files"} ·{" "}
-                          {formatBytes(totalBytes)}
-                        </div>
+                            {!uploading && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeFile(i);
+                                }}
+                                className="text-white/60 hover:text-white"
+                                aria-label="Remove"
+                              >
+                                <X className="size-3" />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <div className="text-[10px] text-white/60 text-right">
+                        {files.length} · {formatBytes(totalBytes)}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    <Input placeholder="Email to" value={recipient} onChange={setRecipient} type="email" />
-                    <Input placeholder="Your email" value={sender} onChange={setSender} type="email" />
-                    <Input placeholder="Title" value={title} onChange={setTitle} />
-                    <textarea
-                      placeholder="Message"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      rows={2}
-                      className="w-full bg-input border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none"
-                    />
-                  </div>
+                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" />
+                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" />
+                  <GlassInput placeholder="Title" value={title} onChange={setTitle} />
+                  <textarea
+                    placeholder="Message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={2}
+                    className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none resize-none"
+                    style={{ borderColor: `${ad.accent}33` }}
+                  />
+                </div>
 
-                  <div className="p-4 border-t border-border space-y-2">
-                    {uploading && (
-                      <div>
-                        <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
-                          <span>Uploading…</span>
-                          <span className="tabular-nums">{overallPct.toFixed(0)}%</span>
-                        </div>
-                        <div className="h-1.5 bg-muted rounded overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-primary to-primary-glow transition-all"
-                            style={{ width: `${overallPct}%` }}
-                          />
-                        </div>
+                <div className="p-3 border-t border-white/10 space-y-2">
+                  {uploading && (
+                    <div>
+                      <div className="flex justify-between text-[10px] text-white/70 mb-1">
+                        <span>Uploading…</span>
+                        <span className="tabular-nums">{overallPct.toFixed(0)}%</span>
                       </div>
+                      <div className="h-1 bg-white/10 rounded overflow-hidden">
+                        <div
+                          className="h-full transition-all"
+                          style={{ width: `${overallPct}%`, background: ad.accent }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleUpload}
+                    disabled={uploading || !files.length || overLimit}
+                    className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-2.5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ background: ad.accent, boxShadow: `0 10px 30px -10px ${ad.accent}` }}
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        Sending…
+                      </>
+                    ) : (
+                      <>
+                        <Send className="size-4" />
+                        Transfer
+                      </>
                     )}
-                    <button
-                      onClick={handleUpload}
-                      disabled={uploading || !files.length || overLimit}
-                      className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-full hover:bg-primary-glow transition-colors glow-red disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {uploading ? (
-                        <>
-                          <Loader2 className="size-4 animate-spin" />
-                          Sending…
-                        </>
-                      ) : (
-                        <>
-                          <Send className="size-4" />
-                          Transfer
-                        </>
-                      )}
-                    </button>
-                    {overLimit && (
-                      <p className="text-[11px] text-primary text-center">
-                        Total exceeds 10 GB limit
-                      </p>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <SuccessCard
-                  shareUrl={shareUrl}
-                  onCopy={copyLink}
-                  copied={copied}
-                  onReset={reset}
-                  fileCount={files.length}
-                  totalBytes={totalBytes}
-                />
-              )}
-            </div>
-          </aside>
-
-          {/* Right: Primlink ad area */}
-          <section className="h-full min-h-0">
-            <a
-              href={PRIMLINK_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative block h-full rounded-2xl overflow-hidden border border-border bg-card shadow-card"
-              aria-label="Visit primlink.com"
-            >
-              {/* gradient art */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(circle at 20% 20%, oklch(0.62 0.24 25 / 0.55), transparent 55%), radial-gradient(circle at 80% 80%, oklch(0.45 0.2 20 / 0.6), transparent 60%), linear-gradient(135deg, oklch(0.17 0.012 20), oklch(0.13 0.01 20))",
-                }}
+                  </button>
+                  {overLimit && (
+                    <p className="text-[11px] text-white text-center">Exceeds 10 GB limit</p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <SuccessCard
+                accent={ad.accent}
+                shareUrl={shareUrl}
+                onCopy={copyLink}
+                copied={copied}
+                onReset={reset}
+                fileCount={files.length}
+                totalBytes={totalBytes}
               />
-              <div className="absolute inset-0 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
+            )}
+          </div>
+        </main>
 
-              <div className="absolute top-4 left-4 inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground bg-background/40 backdrop-blur border border-border rounded-full px-2.5 py-1">
-                <Sparkles className="size-3 text-primary" /> Sponsored
-              </div>
-
-              <div className="absolute top-4 right-4 inline-flex items-center gap-1 text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-                primlink.com <ExternalLink className="size-3" />
-              </div>
-
-              <div className="relative h-full flex flex-col items-center justify-center text-center px-8">
-                <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-5">
-                  <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-                  Powered by Primlink
-                </div>
-                <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] max-w-3xl">
-                  Build, ship and <span className="text-gradient-red">grow faster</span>
-                  <br />with Primlink.
-                </h1>
-                <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-xl">
-                  The all-in-one platform behind UTransfer. Discover tools, apps and services
-                  trusted by makers worldwide.
-                </p>
-                <span className="mt-7 inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-full glow-red group-hover:bg-primary-glow transition-colors">
-                  Visit primlink.com <ExternalLink className="size-4" />
-                </span>
-                <div className="mt-5 text-[11px] text-muted-foreground">
-                  Click anywhere on this panel to continue
-                </div>
-              </div>
-            </a>
-          </section>
+        <div className="pointer-events-auto">
+          <SiteFooter />
         </div>
-      </main>
+      </div>
 
-      <SiteFooter />
+      <CookieBanner />
+
+      <style>{`@keyframes ut_in { from { opacity: 0; transform: translate(-12px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }`}</style>
     </div>
   );
 }
 
-function Input({
+function GlassInput({
   value,
   onChange,
   placeholder,
@@ -404,7 +370,7 @@ function Input({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full bg-input border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+      className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none"
     />
   );
 }
@@ -416,6 +382,7 @@ function SuccessCard({
   onReset,
   fileCount,
   totalBytes,
+  accent,
 }: {
   shareUrl: string;
   onCopy: () => void;
@@ -423,33 +390,38 @@ function SuccessCard({
   onReset: () => void;
   fileCount: number;
   totalBytes: number;
+  accent: string;
 }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
-      <div className="size-14 rounded-full bg-primary/15 grid place-items-center text-primary mb-3">
-        <Check className="size-7" />
+    <div className="flex-1 flex flex-col items-center justify-center text-center p-5">
+      <div
+        className="size-12 rounded-full grid place-items-center text-white mb-3"
+        style={{ background: accent }}
+      >
+        <Check className="size-6" />
       </div>
-      <h2 className="text-2xl font-bold">Transfer ready</h2>
-      <p className="text-muted-foreground text-sm mt-1">
+      <h2 className="text-lg font-bold text-white">Transfer ready</h2>
+      <p className="text-white/70 text-xs mt-1">
         {fileCount} {fileCount === 1 ? "file" : "files"} · {formatBytes(totalBytes)}
       </p>
-      <div className="mt-5 w-full flex items-center gap-2 bg-surface border border-border rounded-lg p-2">
+      <div className="mt-4 w-full flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg p-1.5">
         <input
           readOnly
           value={shareUrl}
-          className="flex-1 bg-transparent px-2 text-sm focus:outline-none truncate"
+          className="flex-1 bg-transparent px-2 text-xs text-white focus:outline-none truncate"
         />
         <button
           onClick={onCopy}
-          className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-primary-glow transition"
+          className="inline-flex items-center gap-1.5 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition"
+          style={{ background: accent }}
         >
-          {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
       <button
         onClick={onReset}
-        className="mt-4 inline-flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 rounded-md px-4 py-2 text-sm transition"
+        className="mt-3 inline-flex items-center justify-center gap-2 text-white border border-white/20 hover:bg-white/10 rounded-md px-3 py-1.5 text-xs transition"
       >
         New transfer
       </button>
