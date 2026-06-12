@@ -9,10 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PolicyRouteImport } from './routes/policy'
+import { Route as LegalRouteImport } from './routes/legal'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DCodeRouteImport } from './routes/d.$code'
 import { Route as AlternativesWetransferRouteImport } from './routes/alternatives.wetransfer'
 
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolicyRoute = PolicyRouteImport.update({
+  id: '/policy',
+  path: '/policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +55,102 @@ const AlternativesWetransferRoute = AlternativesWetransferRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRoute
+  '/legal': typeof LegalRoute
+  '/policy': typeof PolicyRoute
+  '/privacy': typeof PrivacyRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRoute
+  '/legal': typeof LegalRoute
+  '/policy': typeof PolicyRoute
+  '/privacy': typeof PrivacyRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blog': typeof BlogRoute
+  '/legal': typeof LegalRoute
+  '/policy': typeof PolicyRoute
+  '/privacy': typeof PrivacyRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/alternatives/wetransfer' | '/d/$code'
+  fullPaths:
+    | '/'
+    | '/blog'
+    | '/legal'
+    | '/policy'
+    | '/privacy'
+    | '/alternatives/wetransfer'
+    | '/d/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alternatives/wetransfer' | '/d/$code'
-  id: '__root__' | '/' | '/alternatives/wetransfer' | '/d/$code'
+  to:
+    | '/'
+    | '/blog'
+    | '/legal'
+    | '/policy'
+    | '/privacy'
+    | '/alternatives/wetransfer'
+    | '/d/$code'
+  id:
+    | '__root__'
+    | '/'
+    | '/blog'
+    | '/legal'
+    | '/policy'
+    | '/privacy'
+    | '/alternatives/wetransfer'
+    | '/d/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlogRoute: typeof BlogRoute
+  LegalRoute: typeof LegalRoute
+  PolicyRoute: typeof PolicyRoute
+  PrivacyRoute: typeof PrivacyRoute
   AlternativesWetransferRoute: typeof AlternativesWetransferRoute
   DCodeRoute: typeof DCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policy': {
+      id: '/policy'
+      path: '/policy'
+      fullPath: '/policy'
+      preLoaderRoute: typeof PolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlogRoute: BlogRoute,
+  LegalRoute: LegalRoute,
+  PolicyRoute: PolicyRoute,
+  PrivacyRoute: PrivacyRoute,
   AlternativesWetransferRoute: AlternativesWetransferRoute,
   DCodeRoute: DCodeRoute,
 }
