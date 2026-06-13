@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Upload,
   X,
@@ -15,9 +15,11 @@ import { uploadFileResumable } from "@/lib/upload";
 import { formatBytes } from "@/lib/format";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { AdBackdrop, useAdRotator } from "@/components/ad-rotator";
+import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
+import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
+import { startVisitorHeartbeat } from "@/lib/visitors";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,11 +41,19 @@ export const Route = createFileRoute("/")({
 });
 
 const MAX_BYTES = 10 * 1024 * 1024 * 1024;
+const ACCENT = "#ef4444";
 
 type PerFileProgress = { name: string; size: number; sent: number };
 
 function HomePage() {
-  const ad = useAdRotator();
+  const [ads, setAds] = useState<ResolvedAd[]>([]);
+  useEffect(() => {
+    fetchActiveAds().then(setAds).catch(() => {});
+    const stop = startVisitorHeartbeat();
+    return stop;
+  }, []);
+  const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
+
   const [files, setFiles] = useState<File[]>([]);
   const [recipient, setRecipient] = useState("");
   const [sender, setSender] = useState("");
@@ -154,7 +164,6 @@ function HomePage() {
     setTimeout(() => setCopied(false), 1800);
   };
 
-  // Stop link clicks inside the floating widget from triggering the ad redirect.
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
@@ -168,14 +177,13 @@ function HomePage() {
         </div>
 
         <main className="flex-1 min-h-0 relative">
-          {/* Floating send widget — WeTransfer-style, smaller and glass */}
           <div
             onClick={stop}
             className="pointer-events-auto absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-[320px] max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border shadow-card backdrop-blur-2xl overflow-hidden animate-[ut_in_700ms_ease-out_both]"
             style={{
-              background: `linear-gradient(180deg, ${ad.accent}22, rgba(10,10,10,0.55))`,
-              borderColor: `${ad.accent}55`,
-              boxShadow: `0 30px 80px -20px ${ad.accent}55, 0 0 0 1px ${ad.accent}22 inset`,
+              background: `linear-gradient(180deg, ${ACCENT}22, rgba(10,10,10,0.55))`,
+              borderColor: `${ACCENT}55`,
+              boxShadow: `0 30px 80px -20px ${ACCENT}55, 0 0 0 1px ${ACCENT}22 inset`,
             }}
           >
             {!shareUrl ? (
@@ -203,7 +211,7 @@ function HomePage() {
                     className={`cursor-pointer p-3 rounded-xl border-2 border-dashed transition-all ${
                       dragOver ? "bg-white/10" : "hover:bg-white/5"
                     }`}
-                    style={{ borderColor: `${ad.accent}88` }}
+                    style={{ borderColor: `${ACCENT}88` }}
                   >
                     <input
                       ref={inputRef}
@@ -215,7 +223,7 @@ function HomePage() {
                     <div className="flex items-center gap-3">
                       <div
                         className="size-9 rounded-full grid place-items-center text-white shrink-0"
-                        style={{ background: ad.accent }}
+                        style={{ background: ACCENT }}
                       >
                         {files.length ? <Plus className="size-4" /> : <Upload className="size-4" />}
                       </div>
@@ -250,7 +258,7 @@ function HomePage() {
                                 <div className="mt-1 h-0.5 bg-white/10 rounded overflow-hidden">
                                   <div
                                     className="h-full transition-all"
-                                    style={{ width: `${pct}%`, background: ad.accent }}
+                                    style={{ width: `${pct}%`, background: ACCENT }}
                                   />
                                 </div>
                               )}
@@ -285,7 +293,6 @@ function HomePage() {
                     onChange={(e) => setMessage(e.target.value)}
                     rows={2}
                     className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none resize-none"
-                    style={{ borderColor: `${ad.accent}33` }}
                   />
                 </div>
 
@@ -299,7 +306,7 @@ function HomePage() {
                       <div className="h-1 bg-white/10 rounded overflow-hidden">
                         <div
                           className="h-full transition-all"
-                          style={{ width: `${overallPct}%`, background: ad.accent }}
+                          style={{ width: `${overallPct}%`, background: ACCENT }}
                         />
                       </div>
                     </div>
@@ -308,7 +315,7 @@ function HomePage() {
                     onClick={handleUpload}
                     disabled={uploading || !files.length || overLimit}
                     className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-2.5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: ad.accent, boxShadow: `0 10px 30px -10px ${ad.accent}` }}
+                    style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
                   >
                     {uploading ? (
                       <>
@@ -329,7 +336,6 @@ function HomePage() {
               </>
             ) : (
               <SuccessCard
-                accent={ad.accent}
                 shareUrl={shareUrl}
                 onCopy={copyLink}
                 copied={copied}
@@ -382,7 +388,6 @@ function SuccessCard({
   onReset,
   fileCount,
   totalBytes,
-  accent,
 }: {
   shareUrl: string;
   onCopy: () => void;
@@ -390,13 +395,12 @@ function SuccessCard({
   onReset: () => void;
   fileCount: number;
   totalBytes: number;
-  accent: string;
 }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center text-center p-5">
       <div
         className="size-12 rounded-full grid place-items-center text-white mb-3"
-        style={{ background: accent }}
+        style={{ background: ACCENT }}
       >
         <Check className="size-6" />
       </div>
@@ -413,7 +417,7 @@ function SuccessCard({
         <button
           onClick={onCopy}
           className="inline-flex items-center gap-1.5 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition"
-          style={{ background: accent }}
+          style={{ background: ACCENT }}
         >
           {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
           {copied ? "Copied" : "Copy"}
