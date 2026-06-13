@@ -16,6 +16,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DCodeRouteImport } from './routes/d.$code'
 import { Route as AlternativesWetransferRouteImport } from './routes/alternatives.wetransfer'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
@@ -52,6 +53,11 @@ const AlternativesWetransferRoute = AlternativesWetransferRouteImport.update({
   path: '/alternatives/wetransfer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
+  '/admin/login': typeof AdminLoginRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
+  '/admin/login': typeof AdminLoginRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
+  '/admin/login': typeof AdminLoginRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/policy'
     | '/privacy'
+    | '/admin/login'
     | '/alternatives/wetransfer'
     | '/d/$code'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/policy'
     | '/privacy'
+    | '/admin/login'
     | '/alternatives/wetransfer'
     | '/d/$code'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/policy'
     | '/privacy'
+    | '/admin/login'
     | '/alternatives/wetransfer'
     | '/d/$code'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   LegalRoute: typeof LegalRoute
   PolicyRoute: typeof PolicyRoute
   PrivacyRoute: typeof PrivacyRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   AlternativesWetransferRoute: typeof AlternativesWetransferRoute
   DCodeRoute: typeof DCodeRoute
 }
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlternativesWetransferRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -181,9 +201,20 @@ const rootRouteChildren: RootRouteChildren = {
   LegalRoute: LegalRoute,
   PolicyRoute: PolicyRoute,
   PrivacyRoute: PrivacyRoute,
+  AdminLoginRoute: AdminLoginRoute,
   AlternativesWetransferRoute: AlternativesWetransferRoute,
   DCodeRoute: DCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
