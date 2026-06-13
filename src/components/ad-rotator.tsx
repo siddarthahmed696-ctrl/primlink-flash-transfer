@@ -1,123 +1,126 @@
 import { useEffect, useState } from "react";
 import { ExternalLink, Sparkles } from "lucide-react";
+import type { ResolvedAd } from "@/lib/ads";
 
-export type Ad = {
-  id: string;
-  title: string;
-  highlight: string;
-  subtitle: string;
-  cta: string;
-  accent: string; // hex / oklch usable in colors
-  bg: string; // css background value
+const ACCENT = "#ef4444"; // brand red
+
+/** Fallback shown when no admin ads exist yet. */
+export const FALLBACK_AD: ResolvedAd = {
+  id: "fallback",
+  heading: "Send big files fast",
+  tagline: "Up to 10 GB free — no signup, worldwide delivery.",
+  link_url: "https://primlink.com",
+  is_active: true,
+  sort_order: 0,
+  images: [],
+  video: null,
 };
 
-export const ADS: Ad[] = [
-  {
-    id: "primlink-core",
-    title: "Build, ship and",
-    highlight: "grow faster",
-    subtitle:
-      "The all-in-one platform behind UTransfer. Discover tools, apps and services trusted by makers worldwide.",
-    cta: "Explore Primlink",
-    accent: "#ef4444",
-    bg: "radial-gradient(circle at 20% 20%, rgba(239,68,68,0.55), transparent 55%), radial-gradient(circle at 80% 80%, rgba(120,20,20,0.7), transparent 60%), linear-gradient(135deg, #1a0707, #0a0303)",
-  },
-  {
-    id: "primlink-cloud",
-    title: "Scale your apps with",
-    highlight: "Primlink Cloud",
-    subtitle:
-      "Deploy in seconds, edge-cached worldwide. The same infrastructure that powers UTransfer's 10 GB transfers.",
-    cta: "Try Primlink Cloud",
-    accent: "#3b82f6",
-    bg: "radial-gradient(circle at 30% 30%, rgba(59,130,246,0.55), transparent 55%), radial-gradient(circle at 75% 75%, rgba(17,24,90,0.85), transparent 60%), linear-gradient(135deg, #050a1a, #02040d)",
-  },
-  {
-    id: "primlink-studio",
-    title: "Design beautifully with",
-    highlight: "Primlink Studio",
-    subtitle:
-      "AI-assisted design that ships pixel-perfect interfaces. Built for teams, loved by founders.",
-    cta: "Open Primlink Studio",
-    accent: "#a855f7",
-    bg: "radial-gradient(circle at 25% 25%, rgba(168,85,247,0.5), transparent 55%), radial-gradient(circle at 80% 70%, rgba(236,72,153,0.55), transparent 60%), linear-gradient(135deg, #150821, #07030d)",
-  },
-  {
-    id: "primlink-ai",
-    title: "Automate work with",
-    highlight: "Primlink AI",
-    subtitle:
-      "Generative agents that move data, write code and handle support — all wired into your stack.",
-    cta: "Meet Primlink AI",
-    accent: "#10b981",
-    bg: "radial-gradient(circle at 25% 30%, rgba(16,185,129,0.5), transparent 55%), radial-gradient(circle at 78% 78%, rgba(6,95,70,0.7), transparent 60%), linear-gradient(135deg, #051a12, #02080a)",
-  },
-];
-
-const PRIMLINK_URL = "https://primlink.com";
-
-export function useAdRotator(intervalMs = 9000) {
+export function useAdRotator(ads: ResolvedAd[], intervalMs = 30_000) {
+  const safe = ads.length ? ads : [FALLBACK_AD];
   const [index, setIndex] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setIndex((i) => (i + 1) % ADS.length), intervalMs);
+    if (safe.length < 2) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % safe.length), intervalMs);
     return () => clearInterval(id);
-  }, [intervalMs]);
-  return ADS[index];
+  }, [safe.length, intervalMs]);
+  return safe[index % safe.length];
 }
 
-export function AdBackdrop({ ad }: { ad: Ad }) {
+/** Cycles through an ad's images every 4s while it's the active ad. */
+function useImageCycler(images: string[]) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    setI(0);
+    if (images.length < 2) return;
+    const id = setInterval(() => setI((n) => (n + 1) % images.length), 4_000);
+    return () => clearInterval(id);
+  }, [images.join("|")]);
+  return images[i] ?? null;
+}
+
+export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
+  const currentImage = useImageCycler(ad.images);
+  const href = ad.link_url || "https://primlink.com";
   return (
     <a
-      href={PRIMLINK_URL}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Visit ${PRIMLINK_URL}`}
+      aria-label={ad.heading}
       className="group fixed inset-0 z-0 block cursor-pointer overflow-hidden"
     >
-      {ADS.map((a) => (
-        <div
-          key={a.id}
-          className="absolute inset-0 transition-opacity duration-[1400ms] ease-out"
-          style={{ background: a.bg, opacity: a.id === ad.id ? 1 : 0 }}
-        />
-      ))}
-      <div className="absolute inset-0 bg-grid opacity-20 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
+      {/* Red/black base layer */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 75% 75%, rgba(239,68,68,0.45), transparent 60%), radial-gradient(circle at 20% 20%, rgba(120,20,20,0.6), transparent 55%), linear-gradient(135deg, #0a0303, #1a0707)",
+        }}
+      />
 
-      {/* Floating ad copy — center-right of the screen */}
+      {/* Media layer — video wins over image */}
+      {ad.video ? (
+        <video
+          key={ad.video}
+          src={ad.video}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover opacity-90"
+        />
+      ) : currentImage ? (
+        <img
+          key={currentImage}
+          src={currentImage}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover opacity-90 animate-[ut_fade_900ms_ease-out_both]"
+        />
+      ) : null}
+
+      {/* Dim + red wash to keep red/black mood */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-red-950/70" />
+      <div className="absolute inset-0 bg-grid opacity-15 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
+
+      {/* Floating ad copy — right side */}
       <div className="absolute inset-0 flex items-center justify-end pointer-events-none">
         <div className="max-w-2xl pr-[6vw] pl-6 text-right">
           <div
             className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium mb-5"
             style={{
-              borderColor: `${ad.accent}66`,
-              background: `${ad.accent}1a`,
-              color: ad.accent,
+              borderColor: `${ACCENT}66`,
+              background: `${ACCENT}1a`,
+              color: ACCENT,
             }}
           >
-            <Sparkles className="size-3" /> Sponsored — Powered by Primlink
+            <Sparkles className="size-3" /> Powered by Primlink
           </div>
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] text-white drop-shadow-lg">
-            {ad.title}{" "}
-            <span style={{ color: ad.accent }}>{ad.highlight}</span>
+            {ad.heading}
           </h2>
-          <p className="mt-5 text-base sm:text-lg text-white/80 max-w-xl ml-auto">
-            {ad.subtitle}
-          </p>
+          {ad.tagline && (
+            <p className="mt-5 text-base sm:text-lg text-white/85 max-w-xl ml-auto">
+              {ad.tagline}
+            </p>
+          )}
           <span
             className="mt-7 inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-full transition-transform group-hover:scale-[1.03]"
-            style={{ background: ad.accent, color: "#fff", boxShadow: `0 10px 40px -10px ${ad.accent}` }}
+            style={{ background: ACCENT, color: "#fff", boxShadow: `0 10px 40px -10px ${ACCENT}` }}
           >
-            {ad.cta} <ExternalLink className="size-4" />
+            Visit sponsor <ExternalLink className="size-4" />
           </span>
           <div className="mt-4 text-[11px] text-white/60">
-            Click anywhere to visit primlink.com
+            Click anywhere to open the sponsor link
           </div>
         </div>
       </div>
 
       <div className="absolute top-4 right-6 inline-flex items-center gap-1 text-xs text-white/70">
-        primlink.com <ExternalLink className="size-3" />
+        Sponsored <ExternalLink className="size-3" />
       </div>
+
+      <style>{`@keyframes ut_fade { from { opacity: 0; transform: scale(1.04); } to { opacity: .9; transform: scale(1); } }`}</style>
     </a>
   );
 }
