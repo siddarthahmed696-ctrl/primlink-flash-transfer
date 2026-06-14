@@ -336,15 +336,16 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label className="text-xs text-white/70 block mb-1">
-            Images (3–5 required)
+            Inspection images (1–20)
           </label>
           <div
             onClick={() => imgRef.current?.click()}
             className="cursor-pointer border-2 border-dashed border-white/15 rounded-lg p-4 text-center text-xs text-white/60 hover:bg-white/5"
           >
             <Plus className="size-4 mx-auto mb-1" />
-            Click to add images ({images.length}/5)
+            Click to add images ({images.length}/20)
           </div>
+
           <input
             ref={imgRef}
             type="file"
