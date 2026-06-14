@@ -48,7 +48,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
 
   return (
     <a
-      href="https://primlink.com"
+      href={ad.link_url || "https://primlink.com"}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Sponsored"
