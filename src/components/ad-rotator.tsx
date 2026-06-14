@@ -18,8 +18,10 @@ export function useAdRotator(ads: ResolvedAd[], _intervalMs?: number): ResolvedA
   const pool: string[] = [];
   for (const a of ads) for (const img of a.images) pool.push(img);
   const video = ads.find((a) => a.video)?.video ?? null;
+  const firstLink = ads.find((a) => a.link_url)?.link_url ?? null;
   return {
     ...FALLBACK_AD,
+    link_url: firstLink || FALLBACK_AD.link_url,
     images: pool,
     video,
   };
@@ -46,7 +48,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
 
   return (
     <a
-      href="https://primlink.com"
+      href={ad.link_url || "https://primlink.com"}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Sponsored"
