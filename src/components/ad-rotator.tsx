@@ -12,9 +12,17 @@ export const FALLBACK_AD: ResolvedAd = {
   video: null,
 };
 
-// Kept for backwards compatibility with index.tsx import — returns first ad
-export function useAdRotator(ads: ResolvedAd[]) {
-  return ads[0] ?? FALLBACK_AD;
+// Pools every image from every active ad into a single rotating set.
+// Signature kept compatible with previous callers (second arg ignored).
+export function useAdRotator(ads: ResolvedAd[], _intervalMs?: number): ResolvedAd {
+  const pool: string[] = [];
+  for (const a of ads) for (const img of a.images) pool.push(img);
+  const video = ads.find((a) => a.video)?.video ?? null;
+  return {
+    ...FALLBACK_AD,
+    images: pool,
+    video,
+  };
 }
 
 /**
