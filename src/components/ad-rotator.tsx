@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ResolvedAd } from "@/lib/ads";
 
 export const FALLBACK_AD: ResolvedAd = {
