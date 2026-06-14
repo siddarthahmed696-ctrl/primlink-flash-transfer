@@ -31,12 +31,8 @@ export function useAdRotator(ads: ResolvedAd[], _intervalMs?: number): ResolvedA
  * Click anywhere → primlink.com.
  */
 export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
-  // Accept either a single ad (legacy) or the global pool through window
-  const images = useMemo(() => {
-    const pool = (globalThis as any).__ut_image_pool as string[] | undefined;
-    if (pool && pool.length) return pool;
-    return ad.images;
-  }, [ad.images]);
+  const images = ad.images;
+
 
   const [i, setI] = useState(0);
   useEffect(() => {
