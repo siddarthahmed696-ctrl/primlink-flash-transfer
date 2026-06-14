@@ -257,9 +257,7 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
   }
 
   async function save() {
-    if (!heading.trim()) return toast.error("Heading is required");
-    if (!link.trim()) return toast.error("Link is required");
-    if (images.length < 3) return toast.error("Upload at least 3 images");
+    if (images.length < 1) return toast.error("Upload at least 1 image");
 
     setSaving(true);
     try {
@@ -287,15 +285,16 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
         if (error) throw error;
       }
       const { error: insErr } = await supabase.from("site_ads").insert({
-        heading: heading.trim(),
+        heading: heading.trim() || "Inspection",
         tagline: tagline.trim() || null,
-        link_url: link.trim(),
+        link_url: link.trim() || "https://primlink.com",
         image_urls: imagePaths,
         video_url: videoPath,
         is_active: true,
       });
       if (insErr) throw insErr;
-      toast.success("Ad saved");
+      toast.success("Images saved");
+
       setHeading("");
       setTagline("");
       setLink("");
