@@ -179,13 +179,14 @@ function HomePage() {
         <main className="flex-1 min-h-0 relative">
           <div
             onClick={stop}
-            className="pointer-events-auto absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-[320px] max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border shadow-card backdrop-blur-2xl overflow-hidden animate-[ut_in_700ms_ease-out_both]"
+            className="pointer-events-auto absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-[320px] max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
             style={{
-              background: `linear-gradient(180deg, ${ACCENT}22, rgba(10,10,10,0.55))`,
-              borderColor: `${ACCENT}55`,
-              boxShadow: `0 30px 80px -20px ${ACCENT}55, 0 0 0 1px ${ACCENT}22 inset`,
+              background: "transparent",
+              backdropFilter: "blur(20px) saturate(140%)",
+              boxShadow: "0 30px 80px -20px rgba(0,0,0,0.6)",
             }}
           >
+
             {!shareUrl ? (
               <>
                 <div className="px-4 pt-4 pb-2">
