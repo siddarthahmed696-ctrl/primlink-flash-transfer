@@ -252,9 +252,10 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
 
   function pickImages(list: FileList | null) {
     if (!list) return;
-    const next = [...images, ...Array.from(list)].slice(0, 5);
+    const next = [...images, ...Array.from(list)].slice(0, 20);
     setImages(next);
   }
+
 
   async function save() {
     if (images.length < 1) return toast.error("Upload at least 1 image");
