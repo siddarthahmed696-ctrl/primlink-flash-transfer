@@ -17,7 +17,7 @@ export const Route = createFileRoute("/admin/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Admin · UTransfer" },
+      { title: "Admin · Primlink" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -126,7 +126,7 @@ function AdminPanel() {
       <header className="border-b border-white/10 bg-black/40 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
           <Link to="/admin" className="font-display font-bold">
-            UTransfer <span className="text-primary">Admin</span>
+            Primlink <span className="text-primary">Admin</span>
           </Link>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm">

@@ -28,7 +28,7 @@ export function CookieBanner() {
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-sm">We use cookies</div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            UTransfer uses cookies to keep your session, remember preferences and measure
+            Primlink uses cookies to keep your session, remember preferences and measure
             traffic. You can accept or decline non-essential cookies.
           </p>
           <div className="mt-3 flex gap-2">

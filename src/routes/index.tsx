@@ -24,13 +24,13 @@ import { startVisitorHeartbeat } from "@/lib/visitors";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "UTransfer — Send big files fast, free, worldwide" },
+      { title: "Primlink — Send big files fast, free, worldwide" },
       {
         name: "description",
         content:
           "Upload up to 5 GB and share a download link instantly. No login, no signup. Powered by Primlink.",
       },
-      { property: "og:title", content: "UTransfer" },
+      { property: "og:title", content: "Primlink" },
       {
         property: "og:description",
         content: "Send up to 5 GB files with one share link. Free and fast.",
