@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { UTransferLogo } from "./utransfer-logo";
 
 export function IntroSplash() {
-  const [stage, setStage] = useState<"in" | "out" | "done">(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem("ut_intro_shown")) {
-      return "done";
-    }
-    return "in";
-  });
+  const [stage, setStage] = useState<"in" | "out" | "done">("in");
 
   useEffect(() => {
+    if (sessionStorage.getItem("ut_intro_shown")) {
+      setStage("done");
+      return;
+    }
     if (stage === "done") return;
     const t1 = setTimeout(() => setStage("out"), 1500);
     const t2 = setTimeout(() => {
