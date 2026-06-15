@@ -28,12 +28,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Upload up to 10 GB and share a download link instantly. No login, no signup. Powered by Primlink.",
+          "Upload up to 5 GB and share a download link instantly. No login, no signup. Powered by Primlink.",
       },
       { property: "og:title", content: "UTransfer" },
       {
         property: "og:description",
-        content: "Send up to 10 GB files with one share link. Free and fast.",
+        content: "Send up to 5 GB files with one share link. Free and fast.",
       },
     ],
   }),
@@ -87,7 +87,7 @@ function HomePage() {
 
   const handleUpload = async () => {
     if (!files.length) return toast.error("Add at least one file");
-    if (overLimit) return toast.error("Total size exceeds 10 GB limit");
+    if (overLimit) return toast.error("Total size exceeds 5 GB limit");
 
     setUploading(true);
     setProgress(files.map((f) => ({ name: f.name, size: f.size, sent: 0 })));
@@ -193,7 +193,7 @@ function HomePage() {
                   <div className="text-[11px] uppercase tracking-widest text-white/60">
                     Send up to
                   </div>
-                  <div className="font-display text-xl font-bold text-white">10 GB free</div>
+                  <div className="font-display text-xl font-bold text-white">5 GB free</div>
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-2">
@@ -331,7 +331,7 @@ function HomePage() {
                     )}
                   </button>
                   {overLimit && (
-                    <p className="text-[11px] text-white text-center">Exceeds 10 GB limit</p>
+                    <p className="text-[11px] text-white text-center">Exceeds 5 GB limit</p>
                   )}
                 </div>
               </>
