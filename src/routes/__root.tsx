@@ -78,13 +78,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Primlink Transfer — Send big files fast, worldwide" },
+      { title: "UTransfer — Send big files fast, worldwide" },
       {
         name: "description",
         content:
           "Upload up to 10 GB and share a download link with anyone, anywhere. Free, fast, secure file transfer.",
       },
       { name: "theme-color", content: "#1a0606" },
+      { property: "og:title", content: "UTransfer — Send big files fast, worldwide" },
+      { name: "twitter:title", content: "UTransfer — Send big files fast, worldwide" },
+      { name: "description", content: "Primlink Fast Transfer allows secure, global sharing of large files up to 5GB." },
+      { property: "og:description", content: "Primlink Fast Transfer allows secure, global sharing of large files up to 5GB." },
+      { name: "twitter:description", content: "Primlink Fast Transfer allows secure, global sharing of large files up to 5GB." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e1c723d1-0b13-43f2-beff-35f59bfac590/id-preview-34ed61d4--cabfec49-2cad-441f-889e-a154237ea53e.lovable.app-1781529243774.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e1c723d1-0b13-43f2-beff-35f59bfac590/id-preview-34ed61d4--cabfec49-2cad-441f-889e-a154237ea53e.lovable.app-1781529243774.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       {
