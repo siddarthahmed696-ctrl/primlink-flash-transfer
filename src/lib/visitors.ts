@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 function getOrCreateSessionId(): string {
-  if (typeof window === "undefined") return "ssr";
+  if (typeof window === "undefined") return "ssr-session";
   const k = "ut_visitor_sid";
   let v = sessionStorage.getItem(k);
   if (!v) {
@@ -16,11 +16,10 @@ export function startVisitorHeartbeat() {
   const session_id = getOrCreateSessionId();
   const ping = () =>
     supabase
-      .from("visitors")
-      .upsert(
-        { session_id, path: window.location.pathname, last_seen: new Date().toISOString() },
-        { onConflict: "session_id" },
-      )
+      .rpc("heartbeat_visitor", {
+        _session_id: session_id,
+        _path: window.location.pathname,
+      })
       .then(() => {});
   ping();
   const id = setInterval(ping, 20_000);
