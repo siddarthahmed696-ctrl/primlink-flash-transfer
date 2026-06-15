@@ -221,6 +221,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      heartbeat_visitor: {
+        Args: { _path: string; _session_id: string }
+        Returns: undefined
+      }
       increment_download_count: { Args: { _code: string }; Returns: undefined }
     }
     Enums: {
