@@ -37,7 +37,7 @@ export function IntroSplash() {
           </div>
         </div>
         <div className="font-display text-3xl font-bold tracking-tight animate-[ut_fade_700ms_300ms_both]">
-          UTransfer<span className="text-primary">.</span>
+          Primlink<span className="text-primary">.</span>
         </div>
       </div>
       <style>{`

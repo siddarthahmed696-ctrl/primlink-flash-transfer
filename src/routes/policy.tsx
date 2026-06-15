@@ -4,8 +4,8 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 export const Route = createFileRoute("/policy")({
   head: () => ({
     meta: [
-      { title: "Acceptable Use Policy — UTransfer" },
-      { name: "description", content: "Acceptable use policy for UTransfer." },
+      { title: "Acceptable Use Policy — Primlink" },
+      { name: "description", content: "Acceptable use policy for Primlink." },
     ],
   }),
   component: PolicyPage,
@@ -18,7 +18,7 @@ function PolicyPage() {
       <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-12">
         <h1 className="text-4xl font-bold">Acceptable Use Policy</h1>
         <p className="mt-4 text-muted-foreground">
-          UTransfer is built for legitimate sharing. You agree NOT to use it to:
+          Primlink is built for legitimate sharing. You agree NOT to use it to:
         </p>
         <ul className="mt-4 list-disc pl-6 space-y-2 text-muted-foreground">
           <li>Distribute malware, viruses or harmful code.</li>

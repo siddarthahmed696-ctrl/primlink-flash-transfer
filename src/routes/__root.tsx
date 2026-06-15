@@ -78,15 +78,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "UTransfer — Send big files fast, worldwide" },
+      { title: "Primlink — Send big files fast, worldwide" },
       {
         name: "description",
         content:
           "Upload up to 10 GB and share a download link with anyone, anywhere. Free, fast, secure file transfer.",
       },
       { name: "theme-color", content: "#1a0606" },
-      { property: "og:title", content: "UTransfer — Send big files fast, worldwide" },
-      { name: "twitter:title", content: "UTransfer — Send big files fast, worldwide" },
+      { property: "og:title", content: "Primlink — Send big files fast, worldwide" },
+      { name: "twitter:title", content: "Primlink — Send big files fast, worldwide" },
       { name: "description", content: "Primlink Fast Transfer allows secure, global sharing of large files up to 5GB." },
       { property: "og:description", content: "Primlink Fast Transfer allows secure, global sharing of large files up to 5GB." },
       { name: "twitter:description", content: "Primlink Fast Transfer allows secure, global sharing of large files up to 5GB." },
@@ -96,14 +96,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", href: "/favicon.svg" },
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",
