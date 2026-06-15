@@ -40,7 +40,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const MAX_BYTES = 10 * 1024 * 1024 * 1024;
+const MAX_BYTES = 5 * 1024 * 1024 * 1024;
 const ACCENT = "#ef4444";
 
 type PerFileProgress = { name: string; size: number; sent: number };
