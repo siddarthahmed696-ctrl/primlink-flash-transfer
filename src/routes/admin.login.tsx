@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
     meta: [
-      { title: "Admin · Primlink" },
+      { title: "Admin · UTransfer" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
