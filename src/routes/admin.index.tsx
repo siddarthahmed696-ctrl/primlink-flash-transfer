@@ -17,7 +17,7 @@ export const Route = createFileRoute("/admin/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Admin · Primlink" },
+      { title: "Admin · UTransfer" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -126,7 +126,7 @@ function AdminPanel() {
       <header className="border-b border-white/10 bg-black/40 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
           <Link to="/admin" className="font-display font-bold">
-            Primlink <span className="text-primary">Admin</span>
+            UTransfer <span className="text-primary">Admin</span>
           </Link>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm">
@@ -316,7 +316,7 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
         <input
           value={heading}
           onChange={(e) => setHeading(e.target.value)}
-          placeholder="Heading (e.g. Build faster with Primlink)"
+          placeholder="Heading (e.g. Build faster with UTransfer)"
           className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
         />
         <input
