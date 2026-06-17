@@ -365,6 +365,15 @@ function HomePage() {
       </div>
 
       <CookieBanner />
+      <AuthModal
+        open={authOpen}
+        defaultEmail={sender}
+        onClose={() => setAuthOpen(false)}
+        onSuccess={() => {
+          setAuthOpen(false);
+          handleUpload();
+        }}
+      />
 
       <style>{`@keyframes ut_in { from { opacity: 0; transform: translate(-12px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }`}</style>
     </div>
