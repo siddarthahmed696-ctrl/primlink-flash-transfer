@@ -18,6 +18,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
+import { AuthModal } from "@/components/auth-modal";
 import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
 import { startVisitorHeartbeat } from "@/lib/visitors";
 
