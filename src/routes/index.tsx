@@ -18,6 +18,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
+import { AuthModal } from "@/components/auth-modal";
 import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
 import { startVisitorHeartbeat } from "@/lib/visitors";
 
@@ -64,6 +65,7 @@ function HomePage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const totalBytes = useMemo(() => files.reduce((a, f) => a + f.size, 0), [files]);
@@ -88,6 +90,15 @@ function HomePage() {
   const handleUpload = async () => {
     if (!files.length) return toast.error("Add at least one file");
     if (overLimit) return toast.error("Total size exceeds 5 GB limit");
+
+    // Email send requires a real (non-anonymous) account.
+    if (recipient.trim()) {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user || data.user.is_anonymous) {
+        setAuthOpen(true);
+        return;
+      }
+    }
 
     setUploading(true);
     setProgress(files.map((f) => ({ name: f.name, size: f.size, sent: 0 })));
@@ -167,19 +178,19 @@ function HomePage() {
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden text-foreground relative">
+    <div className="min-h-screen sm:h-screen flex flex-col sm:overflow-hidden text-foreground relative">
       <IntroSplash />
       <AdBackdrop ad={ad} />
 
-      <div className="relative z-10 flex flex-col h-full pointer-events-none">
+      <div className="relative z-10 flex flex-col min-h-screen sm:h-full sm:pointer-events-none">
         <div className="pointer-events-auto">
           <SiteHeader />
         </div>
 
-        <main className="flex-1 min-h-0 relative">
+        <main className="flex-1 min-h-0 relative flex items-center sm:block px-4 py-6 sm:p-0">
           <div
             onClick={stop}
-            className="pointer-events-auto absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-[320px] max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
+            className="pointer-events-auto w-full max-w-sm mx-auto sm:mx-0 sm:absolute sm:left-8 sm:top-1/2 sm:-translate-y-1/2 sm:w-[320px] sm:max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
             style={{
               background: "transparent",
               backdropFilter: "blur(20px) saturate(140%)",
@@ -354,6 +365,15 @@ function HomePage() {
       </div>
 
       <CookieBanner />
+      <AuthModal
+        open={authOpen}
+        defaultEmail={sender}
+        onClose={() => setAuthOpen(false)}
+        onSuccess={() => {
+          setAuthOpen(false);
+          handleUpload();
+        }}
+      />
 
       <style>{`@keyframes ut_in { from { opacity: 0; transform: translate(-12px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }`}</style>
     </div>
