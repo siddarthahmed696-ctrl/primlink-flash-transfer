@@ -65,6 +65,7 @@ function HomePage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const totalBytes = useMemo(() => files.reduce((a, f) => a + f.size, 0), [files]);
@@ -89,6 +90,15 @@ function HomePage() {
   const handleUpload = async () => {
     if (!files.length) return toast.error("Add at least one file");
     if (overLimit) return toast.error("Total size exceeds 5 GB limit");
+
+    // Email send requires a real (non-anonymous) account.
+    if (recipient.trim()) {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user || data.user.is_anonymous) {
+        setAuthOpen(true);
+        return;
+      }
+    }
 
     setUploading(true);
     setProgress(files.map((f) => ({ name: f.name, size: f.size, sent: 0 })));
