@@ -178,19 +178,19 @@ function HomePage() {
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden text-foreground relative">
+    <div className="min-h-screen sm:h-screen flex flex-col sm:overflow-hidden text-foreground relative">
       <IntroSplash />
       <AdBackdrop ad={ad} />
 
-      <div className="relative z-10 flex flex-col h-full pointer-events-none">
+      <div className="relative z-10 flex flex-col min-h-screen sm:h-full sm:pointer-events-none">
         <div className="pointer-events-auto">
           <SiteHeader />
         </div>
 
-        <main className="flex-1 min-h-0 relative">
+        <main className="flex-1 min-h-0 relative flex items-center sm:block px-4 py-6 sm:p-0">
           <div
             onClick={stop}
-            className="pointer-events-auto absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-[320px] max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
+            className="pointer-events-auto w-full max-w-sm mx-auto sm:mx-0 sm:absolute sm:left-8 sm:top-1/2 sm:-translate-y-1/2 sm:w-[320px] sm:max-h-[calc(100vh-7rem)] flex flex-col rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
             style={{
               background: "transparent",
               backdropFilter: "blur(20px) saturate(140%)",
