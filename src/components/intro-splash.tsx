@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UTransferLogo } from "./utransfer-logo";
+import { UTransferLogo } from "./vmoveyou-logo";
 
 export function IntroSplash() {
   const [stage, setStage] = useState<"in" | "out" | "done">("in");
@@ -37,7 +37,7 @@ export function IntroSplash() {
           </div>
         </div>
         <div className="font-display text-3xl font-bold tracking-tight animate-[ut_fade_700ms_300ms_both]">
-          UTransfer<span className="text-primary">.</span>
+          V Move You<span className="text-primary">.</span>
         </div>
       </div>
       <style>{`

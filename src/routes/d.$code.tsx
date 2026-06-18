@@ -28,15 +28,15 @@ interface FileRow {
 export const Route = createFileRoute("/d/$code")({
   head: ({ params }) => ({
     meta: [
-      { title: `Download files · UTransfer Transfer` },
+      { title: `Download files · V Move You Transfer` },
       {
         name: "description",
-        content: `Someone shared files with you on UTransfer Transfer. Tap to download.`,
+        content: `Someone shared files with you on V Move You Transfer. Tap to download.`,
       },
       { property: "og:title", content: "Files shared with you" },
       {
         property: "og:description",
-        content: "Download the files shared via UTransfer Transfer.",
+        content: "Download the files shared via V Move You Transfer.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -258,7 +258,7 @@ function Shell({ children }: { children: React.ReactNode }) {
             <span className="size-7 rounded-md bg-primary grid place-items-center text-primary-foreground">
               <Zap className="size-4" />
             </span>
-            UTransfer<span className="text-primary">.</span>
+            V Move You<span className="text-primary">.</span>
           </Link>
         </div>
       </header>

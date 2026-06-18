@@ -9,7 +9,7 @@ export function UTransferLogo({ className, size = 32 }: Props) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      aria-label="UTransfer"
+      aria-label="V Move You"
     >
       <defs>
         <linearGradient id="utg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
