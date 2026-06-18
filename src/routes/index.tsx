@@ -437,11 +437,13 @@ function GlassInput({
   onChange,
   placeholder,
   type = "text",
+  ariaLabel,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   type?: string;
+  ariaLabel?: string;
 }) {
   return (
     <input
@@ -449,6 +451,7 @@ function GlassInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
+      aria-label={ariaLabel ?? placeholder}
       className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none"
     />
   );
