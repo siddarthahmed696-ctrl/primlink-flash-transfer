@@ -488,6 +488,7 @@ function SuccessCard({
         <input
           readOnly
           value={shareUrl}
+          aria-label="Share link"
           className="flex-1 bg-transparent px-2 text-xs text-white focus:outline-none truncate"
         />
         <button
