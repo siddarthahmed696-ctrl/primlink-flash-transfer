@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { UTransferLogo } from "./utransfer-logo";
+import { UTransferLogo } from "./vmoveyou-logo";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -32,7 +32,7 @@ export function SiteHeader() {
         >
           <UTransferLogo size={28} />
           <span className="truncate">
-            UTransfer<span className="text-primary">.</span>
+            V Move You<span className="text-primary">.</span>
           </span>
         </Link>
         <nav className="hidden sm:flex items-center gap-5">{links}</nav>
@@ -58,7 +58,7 @@ export function SiteFooter() {
   return (
     <footer className="relative z-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:h-10 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60">
-        <div>© {new Date().getFullYear()} UTransfer</div>
+        <div>© {new Date().getFullYear()} V Move You</div>
         <div className="flex flex-wrap gap-4">
           <Link to="/privacy" className="hover:text-white">Privacy</Link>
           <Link to="/policy" className="hover:text-white">Policy</Link>

@@ -3,7 +3,7 @@ import { Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const ACCENT = "#ef4444";
+const ACCENT = "#2563eb";
 
 export function AuthModal({
   open,

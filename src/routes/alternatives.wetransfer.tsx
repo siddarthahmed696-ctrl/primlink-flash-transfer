@@ -4,20 +4,20 @@ import { Zap, Globe2, ShieldCheck, Check, X, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/alternatives/wetransfer")({
   head: () => ({
     meta: [
-      { title: "Best WeTransfer Alternative — 10 GB Free, No Sign-Up | UTransfer" },
+      { title: "Best WeTransfer Alternative — 10 GB Free, No Sign-Up | V Move You" },
       {
         name: "description",
         content:
-          "Looking for a WeTransfer alternative? UTransfer Transfer offers 10 GB free (vs WeTransfer's 2 GB), no account required, and instant worldwide sharing. Try it now.",
+          "Looking for a WeTransfer alternative? V Move You Transfer offers 10 GB free (vs WeTransfer's 2 GB), no account required, and instant worldwide sharing. Try it now.",
       },
       {
         property: "og:title",
-        content: "Best WeTransfer Alternative — 10 GB Free, No Sign-Up | UTransfer",
+        content: "Best WeTransfer Alternative — 10 GB Free, No Sign-Up | V Move You",
       },
       {
         property: "og:description",
         content:
-          "Send up to 10 GB for free with UTransfer. No account, no waiting — just drop files and share the link instantly.",
+          "Send up to 10 GB for free with V Move You. No account, no waiting — just drop files and share the link instantly.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/alternatives/wetransfer" },
@@ -55,7 +55,7 @@ function WeTransferAlternativePage() {
             The <span className="text-gradient-red">best WeTransfer alternative</span> for big files.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            UTransfer gives you <strong>10 GB free</strong> — 5× more than WeTransfer's 2 GB free tier. No sign-up, no email verification, no limits on downloads. Just drop files and share.
+            V Move You gives you <strong>10 GB free</strong> — 5× more than WeTransfer's 2 GB free tier. No sign-up, no email verification, no limits on downloads. Just drop files and share.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -77,16 +77,16 @@ function WeTransferAlternativePage() {
         {/* Comparison */}
         <section id="comparison" className="relative mx-auto max-w-5xl px-6 py-20">
           <h2 className="text-3xl sm:text-4xl font-bold text-center">
-            UTransfer vs <span className="text-gradient-red">WeTransfer</span>
+            V Move You vs <span className="text-gradient-red">WeTransfer</span>
           </h2>
           <p className="mt-3 text-muted-foreground text-center max-w-xl mx-auto">
-            Why users switch to UTransfer for free file transfers.
+            Why users switch to V Move You for free file transfers.
           </p>
 
           <div className="mt-10 rounded-2xl border border-border overflow-hidden bg-card">
             <div className="grid grid-cols-[1.5fr_1fr_1fr] gap-4 px-6 py-4 text-sm font-medium border-b border-border bg-surface">
               <div>Feature</div>
-              <div className="text-center text-primary">UTransfer</div>
+              <div className="text-center text-primary">V Move You</div>
               <div className="text-center text-muted-foreground">WeTransfer</div>
             </div>
 
@@ -138,7 +138,7 @@ function WeTransferAlternativePage() {
             <ReasonCard
               icon={<Zap className="size-5" />}
               title="5× the free limit"
-              body="WeTransfer caps free transfers at 2 GB. UTransfer lets you send up to 10 GB without paying a cent — perfect for video editors, designers, and anyone with large files."
+              body="WeTransfer caps free transfers at 2 GB. V Move You lets you send up to 10 GB without paying a cent — perfect for video editors, designers, and anyone with large files."
             />
             <ReasonCard
               icon={<Globe2 className="size-5" />}
@@ -158,8 +158,8 @@ function WeTransferAlternativePage() {
           <h2 className="text-3xl font-bold text-center mb-10">Frequently asked questions</h2>
           <div className="space-y-4">
             <FaqItem
-              question="Is UTransfer really a free WeTransfer alternative?"
-              answer="Yes. UTransfer is completely free for transfers up to 10 GB. There are no hidden fees, no credit card required, and no subscription upsells."
+              question="Is V Move You really a free WeTransfer alternative?"
+              answer="Yes. V Move You is completely free for transfers up to 10 GB. There are no hidden fees, no credit card required, and no subscription upsells."
             />
             <FaqItem
               question="Do recipients need an account to download?"
@@ -167,7 +167,7 @@ function WeTransferAlternativePage() {
             />
             <FaqItem
               question="How does download speed compare to WeTransfer?"
-              answer="UTransfer uses a global CDN to deliver files quickly from the nearest edge location. Most users see comparable or faster download speeds than traditional transfer services."
+              answer="V Move You uses a global CDN to deliver files quickly from the nearest edge location. Most users see comparable or faster download speeds than traditional transfer services."
             />
             <FaqItem
               question="Is there a file type restriction?"
@@ -183,7 +183,7 @@ function WeTransferAlternativePage() {
               Ready to switch from <span className="text-gradient-red">WeTransfer</span>?
             </h2>
             <p className="mt-4 text-muted-foreground max-w-lg mx-auto">
-              Join thousands of users who moved to UTransfer for bigger free limits and zero friction.
+              Join thousands of users who moved to V Move You for bigger free limits and zero friction.
             </p>
             <div className="mt-8">
               <Link
@@ -211,7 +211,7 @@ function Header() {
           <span className="size-7 rounded-md bg-primary grid place-items-center text-primary-foreground">
             <Zap className="size-4" />
           </span>
-          UTransfer<span className="text-primary">.</span>
+          V Move You<span className="text-primary">.</span>
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
           <a href="#comparison" className="hover:text-foreground transition-colors">Comparison</a>
@@ -226,7 +226,7 @@ function Footer() {
   return (
     <footer className="border-t border-border/60 mt-12">
       <div className="mx-auto max-w-6xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-        <div>© {new Date().getFullYear()} UTransfer Transfer</div>
+        <div>© {new Date().getFullYear()} V Move You Transfer</div>
         <div>Built for speed. Made for the world.</div>
       </div>
     </footer>
