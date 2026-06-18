@@ -347,11 +347,12 @@ function HomePage() {
                     </div>
                   )}
 
-                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" />
-                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" />
-                  <GlassInput placeholder="Title" value={title} onChange={setTitle} />
+                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" ariaLabel="Recipient email" />
+                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" ariaLabel="Your email" />
+                  <GlassInput placeholder="Title" value={title} onChange={setTitle} ariaLabel="Title" />
                   <textarea
                     placeholder="Message"
+                    aria-label="Message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={2}
