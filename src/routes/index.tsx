@@ -157,8 +157,34 @@ function HomePage() {
       const base = isPreview
         ? `https://primlink-flash-transfer.lovable.app`
         : window.location.origin;
-      setShareUrl(`${base}/d/${transfer.share_code}`);
-      toast.success("Transfer ready!");
+      const url = `${base}/d/${transfer.share_code}`;
+      setShareUrl(url);
+
+      // If a recipient email was provided, open the user's mail client
+      // pre-filled with the download link so the email actually goes out
+      // from their own address.
+      if (recipient.trim()) {
+        const subject = encodeURIComponent(
+          title?.trim() ? `${title} — files via V Move You` : `Files for you — V Move You`,
+        );
+        const bodyLines = [
+          `Hi,`,
+          ``,
+          message?.trim() ? message : `${sender || "Someone"} sent you ${files.length} file(s) (${formatBytes(totalBytes)}).`,
+          ``,
+          `Download here:`,
+          url,
+          ``,
+          `— Sent via V Move You`,
+        ];
+        const body = encodeURIComponent(bodyLines.join("\n"));
+        const cc = sender ? `&cc=${encodeURIComponent(sender)}` : "";
+        window.location.href = `mailto:${encodeURIComponent(recipient)}?subject=${subject}${cc}&body=${body}`;
+        toast.success("Opening your email app to send…");
+      } else {
+        toast.success("Transfer ready!");
+      }
+
     } catch (e) {
       console.error(e);
       toast.error("Upload failed. Please try again.");
