@@ -42,7 +42,7 @@ export const Route = createFileRoute("/")({
 });
 
 const MAX_BYTES = 5 * 1024 * 1024 * 1024;
-const ACCENT = "#ef4444";
+const ACCENT = "#2563eb";
 
 type PerFileProgress = { name: string; size: number; sent: number };
 

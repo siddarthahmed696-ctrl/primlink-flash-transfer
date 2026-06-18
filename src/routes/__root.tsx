@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Upload up to 10 GB and share a download link with anyone, anywhere. Free, fast, secure file transfer.",
       },
-      { name: "theme-color", content: "#1a0606" },
+      { name: "theme-color", content: "#0a1226" },
       { property: "og:title", content: "V Move You — Send big files fast, worldwide" },
       { name: "twitter:title", content: "V Move You — Send big files fast, worldwide" },
       { name: "description", content: "V Move You Fast Transfer allows secure, global sharing of large files up to 5GB." },
