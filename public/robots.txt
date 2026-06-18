@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /d/
+
+Sitemap: https://primlink-flash-transfer.lovable.app/sitemap.xml

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PolicyRouteImport } from './routes/policy'
 import { Route as LegalRouteImport } from './routes/legal'
@@ -20,6 +21,11 @@ import { Route as DCodeRouteImport } from './routes/d.$code'
 import { Route as AlternativesWetransferRouteImport } from './routes/alternatives.wetransfer'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/policy'
     | '/privacy'
+    | '/sitemap.xml'
     | '/admin/login'
     | '/alternatives/wetransfer'
     | '/d/$code'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/policy'
     | '/privacy'
+    | '/sitemap.xml'
     | '/admin/login'
     | '/alternatives/wetransfer'
     | '/d/$code'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/policy'
     | '/privacy'
+    | '/sitemap.xml'
     | '/admin/login'
     | '/alternatives/wetransfer'
     | '/d/$code'
@@ -152,12 +164,20 @@ export interface RootRouteChildren {
   LegalRoute: typeof LegalRoute
   PolicyRoute: typeof PolicyRoute
   PrivacyRoute: typeof PrivacyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AlternativesWetransferRoute: typeof AlternativesWetransferRoute
   DCodeRoute: typeof DCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -250,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalRoute: LegalRoute,
   PolicyRoute: PolicyRoute,
   PrivacyRoute: PrivacyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AlternativesWetransferRoute: AlternativesWetransferRoute,
   DCodeRoute: DCodeRoute,
 }

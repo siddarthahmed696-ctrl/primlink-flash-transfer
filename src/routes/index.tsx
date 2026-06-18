@@ -31,10 +31,35 @@ export const Route = createFileRoute("/")({
         content:
           "Upload up to 5 GB and share a download link instantly. No login, no signup. Powered by V Move You.",
       },
-      { property: "og:title", content: "V Move You" },
+      { property: "og:title", content: "V Move You — Send big files fast, free, worldwide" },
       {
         property: "og:description",
         content: "Send up to 5 GB files with one share link. Free and fast.",
+      },
+      { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://primlink-flash-transfer.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "V Move You",
+          url: "https://primlink-flash-transfer.lovable.app/",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "V Move You",
+          applicationCategory: "FileTransfer",
+          operatingSystem: "Web-based",
+          url: "https://primlink-flash-transfer.lovable.app/",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        }),
       },
     ],
   }),
@@ -322,11 +347,12 @@ function HomePage() {
                     </div>
                   )}
 
-                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" />
-                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" />
-                  <GlassInput placeholder="Title" value={title} onChange={setTitle} />
+                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" ariaLabel="Recipient email" />
+                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" ariaLabel="Your email" />
+                  <GlassInput placeholder="Title" value={title} onChange={setTitle} ariaLabel="Title" />
                   <textarea
                     placeholder="Message"
+                    aria-label="Message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={2}
@@ -411,11 +437,13 @@ function GlassInput({
   onChange,
   placeholder,
   type = "text",
+  ariaLabel,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   type?: string;
+  ariaLabel?: string;
 }) {
   return (
     <input
@@ -423,6 +451,7 @@ function GlassInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
+      aria-label={ariaLabel ?? placeholder}
       className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none"
     />
   );
@@ -459,6 +488,7 @@ function SuccessCard({
         <input
           readOnly
           value={shareUrl}
+          aria-label="Share link"
           className="flex-1 bg-transparent px-2 text-xs text-white focus:outline-none truncate"
         />
         <button
