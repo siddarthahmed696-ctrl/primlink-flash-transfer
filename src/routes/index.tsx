@@ -31,10 +31,35 @@ export const Route = createFileRoute("/")({
         content:
           "Upload up to 5 GB and share a download link instantly. No login, no signup. Powered by V Move You.",
       },
-      { property: "og:title", content: "V Move You" },
+      { property: "og:title", content: "V Move You — Send big files fast, free, worldwide" },
       {
         property: "og:description",
         content: "Send up to 5 GB files with one share link. Free and fast.",
+      },
+      { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://primlink-flash-transfer.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "V Move You",
+          url: "https://primlink-flash-transfer.lovable.app/",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "V Move You",
+          applicationCategory: "FileTransfer",
+          operatingSystem: "Web-based",
+          url: "https://primlink-flash-transfer.lovable.app/",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        }),
       },
     ],
   }),
