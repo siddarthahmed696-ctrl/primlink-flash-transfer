@@ -76,7 +76,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(circle at 75% 75%, rgba(239,68,68,0.45), transparent 60%), linear-gradient(135deg, #0a0303, #1a0707)",
+              "radial-gradient(circle at 75% 75%, rgba(37,99,235,0.45), transparent 60%), linear-gradient(135deg, #030814, #0a1226)",
           }}
         />
       )}
