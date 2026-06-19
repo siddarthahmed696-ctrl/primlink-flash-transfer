@@ -226,6 +226,7 @@ export type Database = {
         Returns: undefined
       }
       increment_download_count: { Args: { _code: string }; Returns: undefined }
+      is_recent_transfer: { Args: { _id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
