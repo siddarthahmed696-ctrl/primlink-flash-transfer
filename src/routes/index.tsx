@@ -102,12 +102,15 @@ function HomePage() {
 
   const onPickFiles = useCallback((picked: FileList | File[]) => {
     const nextFiles = Array.from(picked);
-    if (nextFiles.some((file) => file.size > SUBSCRIPTION_REDIRECT_BYTES)) {
+    if (
+      nextFiles.some((file) => file.size > SUBSCRIPTION_REDIRECT_BYTES) ||
+      [...files, ...nextFiles].reduce((sum, file) => sum + file.size, 0) > MAX_BYTES
+    ) {
       void navigate({ to: "/subscription" });
       return;
     }
     setFiles((prev) => [...prev, ...nextFiles]);
-  }, [navigate]);
+  }, [files, navigate]);
   const removeFile = (i: number) => setFiles((prev) => prev.filter((_, idx) => idx !== i));
   const reset = () => {
     setFiles([]);
@@ -265,7 +268,7 @@ function HomePage() {
                   <div className="text-[11px] uppercase tracking-widest text-white/60">
                     Send up to
                   </div>
-                  <div className="font-display text-xl font-bold text-white">5 GB free</div>
+                  <div className="font-display text-xl font-bold text-white">100 MB free</div>
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-2">
@@ -387,7 +390,7 @@ function HomePage() {
                   )}
                   <button
                     onClick={handleUpload}
-                    disabled={uploading || !files.length || overLimit}
+                    disabled={uploading || !files.length}
                     className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-2.5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
                   >
@@ -399,12 +402,12 @@ function HomePage() {
                     ) : (
                       <>
                         <Send className="size-4" />
-                        Transfer
+                        {overLimit ? "View subscription" : "Transfer"}
                       </>
                     )}
                   </button>
                   {overLimit && (
-                    <p className="text-[11px] text-white text-center">Exceeds 5 GB limit</p>
+                    <p className="text-[11px] text-white text-center">Exceeds 100 MB free limit</p>
                   )}
                 </div>
               </>

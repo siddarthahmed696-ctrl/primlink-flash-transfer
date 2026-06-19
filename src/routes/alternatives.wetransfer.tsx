@@ -4,20 +4,20 @@ import { Zap, Globe2, ShieldCheck, Check, X, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/alternatives/wetransfer")({
   head: () => ({
     meta: [
-      { title: "Best WeTransfer Alternative — 10 GB Free, No Sign-Up | V Move You" },
+      { title: "Best WeTransfer Alternative — 100 MB Free | V Move You" },
       {
         name: "description",
         content:
-          "Looking for a WeTransfer alternative? V Move You Transfer offers 10 GB free (vs WeTransfer's 2 GB), no account required, and instant worldwide sharing. Try it now.",
+          "Looking for a WeTransfer alternative? V Move You Transfer offers 100 MB free, no account required, and instant worldwide sharing. Try it now.",
       },
       {
         property: "og:title",
-        content: "Best WeTransfer Alternative — 10 GB Free, No Sign-Up | V Move You",
+        content: "Best WeTransfer Alternative — 100 MB Free | V Move You",
       },
       {
         property: "og:description",
         content:
-          "Send up to 10 GB for free with V Move You. No account, no waiting — just drop files and share the link instantly.",
+          "Send up to 100 MB for free with V Move You. No account, no waiting — just drop files and share the link instantly.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/alternatives/wetransfer" },
@@ -55,7 +55,7 @@ function WeTransferAlternativePage() {
             The <span className="text-gradient-red">best WeTransfer alternative</span> for big files.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            V Move You gives you <strong>10 GB free</strong> — 5× more than WeTransfer's 2 GB free tier. No sign-up, no email verification, no limits on downloads. Just drop files and share.
+            V Move You gives you <strong>100 MB free</strong> with no sign-up, no email verification, and instant links. Just drop files and share.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -92,7 +92,7 @@ function WeTransferAlternativePage() {
 
             <ComparisonRow
               feature="Free file limit"
-              primlink="10 GB"
+              primlink="100 MB"
               wetransfer="2 GB"
               highlight
             />
@@ -137,8 +137,8 @@ function WeTransferAlternativePage() {
           <div className="mt-12 grid md:grid-cols-3 gap-5">
             <ReasonCard
               icon={<Zap className="size-5" />}
-              title="5× the free limit"
-              body="WeTransfer caps free transfers at 2 GB. V Move You lets you send up to 10 GB without paying a cent — perfect for video editors, designers, and anyone with large files."
+              title="Fast free transfers"
+              body="V Move You lets you send up to 100 MB without paying a cent — perfect for documents, images, small videos, and everyday sharing."
             />
             <ReasonCard
               icon={<Globe2 className="size-5" />}
@@ -159,7 +159,7 @@ function WeTransferAlternativePage() {
           <div className="space-y-4">
             <FaqItem
               question="Is V Move You really a free WeTransfer alternative?"
-              answer="Yes. V Move You is completely free for transfers up to 10 GB. There are no hidden fees, no credit card required, and no subscription upsells."
+              answer="Yes. V Move You is completely free for transfers up to 100 MB. Larger transfers can move to a subscription plan."
             />
             <FaqItem
               question="Do recipients need an account to download?"
@@ -191,7 +191,7 @@ function WeTransferAlternativePage() {
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-8 py-3 rounded-lg hover:bg-primary-glow transition-colors glow-red"
               >
                 <Zap className="size-4" />
-                Start your first 10 GB transfer
+                Start your first 100 MB transfer
               </Link>
             </div>
           </div>
