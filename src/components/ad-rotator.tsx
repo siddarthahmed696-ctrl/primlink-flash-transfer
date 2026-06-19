@@ -13,7 +13,6 @@ export const FALLBACK_AD: ResolvedAd = {
 };
 
 // Pools every image from every active ad into a single rotating set.
-// Signature kept compatible with previous callers (second arg ignored).
 export function useAdRotator(ads: ResolvedAd[], _intervalMs?: number): ResolvedAd {
   const pool: string[] = [];
   for (const a of ads) for (const img of a.images) pool.push(img);
@@ -28,19 +27,18 @@ export function useAdRotator(ads: ResolvedAd[], _intervalMs?: number): ResolvedA
 }
 
 /**
- * Fullscreen rotating image backdrop (WeTransfer-style).
- * Pools every image from every active ad, shuffles, and cycles one every 10s.
- * Click anywhere → primlink.com.
+ * Fullscreen rotating image backdrop with smooth crossfade + Ken Burns zoom.
+ * Each image stays ~8s. Two stacked layers swap so the new image fades in
+ * over the previous one (no black flash, no jump-cut).
  */
 export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
   const images = ad.images;
-
-
   const [i, setI] = useState(0);
+
   useEffect(() => {
     setI(0);
     if (images.length < 2) return;
-    const id = setInterval(() => setI((n) => (n + 1) % images.length), 10_000);
+    const id = setInterval(() => setI((n) => (n + 1) % images.length), 8000);
     return () => clearInterval(id);
   }, [images.length]);
 
@@ -69,18 +67,27 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
           key={current}
           src={current}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover animate-[ut_fade_900ms_ease-out_both]"
+          className="absolute inset-0 h-full w-full object-cover ut-kenburns"
         />
       ) : (
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(circle at 75% 75%, rgba(37,99,235,0.45), transparent 60%), linear-gradient(135deg, #030814, #0a1226)",
+              "radial-gradient(circle at 75% 75%, rgba(220,38,38,0.45), transparent 60%), linear-gradient(135deg, #050505, #1a0606)",
           }}
         />
       )}
-      <style>{`@keyframes ut_fade { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: scale(1); } }`}</style>
+      {/* subtle vignette so overlay text stays legible */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+      <style>{`
+        @keyframes ut_kenburns {
+          0%   { opacity: 0; transform: scale(1.08) translate3d(0,0,0); filter: blur(8px); }
+          12%  { opacity: 1; filter: blur(0); }
+          100% { opacity: 1; transform: scale(1.0) translate3d(-1%, -1%, 0); filter: blur(0); }
+        }
+        .ut-kenburns { animation: ut_kenburns 8s ease-out both; will-change: transform, opacity, filter; }
+      `}</style>
     </a>
   );
 }
