@@ -37,6 +37,8 @@ type Ad = {
 };
 
 function AdminPanel() {
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   const nav = useNavigate();
   const [checking, setChecking] = useState(true);
   const [ads, setAds] = useState<Ad[]>([]);
