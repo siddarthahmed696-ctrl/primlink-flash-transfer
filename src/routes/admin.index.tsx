@@ -189,28 +189,60 @@ function AdminPanel() {
             {ads.map((ad) => (
               <div
                 key={ad.id}
-                className="rounded-xl border border-white/10 bg-black/40 p-4 flex items-center gap-4"
+                className="rounded-xl border border-white/10 bg-black/40 p-4"
               >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold truncate">{ad.heading}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded ${
-                        ad.is_active ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/60"
-                      }`}
-                    >
-                      {ad.is_active ? "Active" : "Paused"}
-                    </span>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold truncate">{ad.heading}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded ${
+                          ad.is_active ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/60"
+                        }`}
+                      >
+                        {ad.is_active ? "Active" : "Paused"}
+                      </span>
+                    </div>
+                    {ad.tagline && <p className="text-xs text-white/60 truncate">{ad.tagline}</p>}
+                    <p className="text-[11px] text-white/50 truncate mt-0.5">→ {ad.link_url}</p>
+                    <p className="text-[10px] text-white/40 mt-0.5">
+                      {ad.image_urls.length} image{ad.image_urls.length === 1 ? "" : "s"}
+                      {ad.video_url ? " · 1 video" : ""}
+                    </p>
                   </div>
-                  {ad.tagline && <p className="text-xs text-white/60 truncate">{ad.tagline}</p>}
-                  <p className="text-[11px] text-white/50 truncate mt-0.5">→ {ad.link_url}</p>
-                  <p className="text-[10px] text-white/40 mt-0.5">
-                    {ad.image_urls.length} image{ad.image_urls.length === 1 ? "" : "s"}
-                    {ad.video_url ? " · 1 video" : ""}
-                  </p>
+                  <button
+                    onClick={() => setEditingId(editingId === ad.id ? null : ad.id)}
+                    className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
+                  >
+                    {editingId === ad.id ? "Close" : "Edit"}
+                  </button>
+                  <button
+                    onClick={() => toggleActive(ad)}
+                    className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
+                  >
+                    {ad.is_active ? "Pause" : "Activate"}
+                  </button>
+                  <button
+                    onClick={() => deleteAd(ad)}
+                    className="text-xs px-3 py-1.5 rounded-md border border-red-500/30 text-red-300 hover:bg-red-500/10 inline-flex items-center gap-1"
+                  >
+                    <Trash2 className="size-3" /> Delete
+                  </button>
                 </div>
-                <button
-                  onClick={() => toggleActive(ad)}
+                {editingId === ad.id && (
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <AdEditForm
+                      ad={ad}
+                      onSaved={() => {
+                        setEditingId(null);
+                        loadAds();
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+
                   className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
                 >
                   {ad.is_active ? "Pause" : "Activate"}
