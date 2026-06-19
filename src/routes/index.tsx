@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Upload,
@@ -25,16 +25,16 @@ import { startVisitorHeartbeat } from "@/lib/visitors";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "V Move You — Send big files fast, free, worldwide" },
+      { title: "V Move You — Send files up to 100 MB free" },
       {
         name: "description",
         content:
-          "Upload up to 5 GB and share a download link instantly. No login, no signup. Powered by V Move You.",
+          "Upload up to 100 MB and share a download link instantly. No login, no signup. Powered by V Move You.",
       },
-      { property: "og:title", content: "V Move You — Send big files fast, free, worldwide" },
+      { property: "og:title", content: "V Move You — Send files up to 100 MB free" },
       {
         property: "og:description",
-        content: "Send up to 5 GB files with one share link. Free and fast.",
+        content: "Send up to 100 MB files with one share link. Free and fast.",
       },
       { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/" },
     ],
@@ -66,12 +66,14 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const MAX_BYTES = 5 * 1024 * 1024 * 1024;
+const MAX_BYTES = 100 * 1024 * 1024;
+const SUBSCRIPTION_REDIRECT_BYTES = 500 * 1024 * 1024;
 const ACCENT = "#2563eb";
 
 type PerFileProgress = { name: string; size: number; sent: number };
 
 function HomePage() {
+  const navigate = useNavigate();
   const [ads, setAds] = useState<ResolvedAd[]>([]);
   useEffect(() => {
     fetchActiveAds().then(setAds).catch(() => {});
@@ -99,8 +101,16 @@ function HomePage() {
   const overallPct = totalBytes > 0 ? Math.min(100, (totalSent / totalBytes) * 100) : 0;
 
   const onPickFiles = useCallback((picked: FileList | File[]) => {
-    setFiles((prev) => [...prev, ...Array.from(picked)]);
-  }, []);
+    const nextFiles = Array.from(picked);
+    if (
+      nextFiles.some((file) => file.size > SUBSCRIPTION_REDIRECT_BYTES) ||
+      [...files, ...nextFiles].reduce((sum, file) => sum + file.size, 0) > MAX_BYTES
+    ) {
+      void navigate({ to: "/subscription" });
+      return;
+    }
+    setFiles((prev) => [...prev, ...nextFiles]);
+  }, [files, navigate]);
   const removeFile = (i: number) => setFiles((prev) => prev.filter((_, idx) => idx !== i));
   const reset = () => {
     setFiles([]);
@@ -114,7 +124,10 @@ function HomePage() {
 
   const handleUpload = async () => {
     if (!files.length) return toast.error("Add at least one file");
-    if (overLimit) return toast.error("Total size exceeds 5 GB limit");
+    if (overLimit) {
+      void navigate({ to: "/subscription" });
+      return;
+    }
 
     // Email send requires a real (non-anonymous) account.
     if (recipient.trim()) {
@@ -255,7 +268,7 @@ function HomePage() {
                   <div className="text-[11px] uppercase tracking-widest text-white/60">
                     Send up to
                   </div>
-                  <div className="font-display text-xl font-bold text-white">5 GB free</div>
+                  <div className="font-display text-xl font-bold text-white">100 MB free</div>
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-2">
@@ -377,7 +390,7 @@ function HomePage() {
                   )}
                   <button
                     onClick={handleUpload}
-                    disabled={uploading || !files.length || overLimit}
+                    disabled={uploading || !files.length}
                     className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-2.5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
                   >
@@ -389,12 +402,12 @@ function HomePage() {
                     ) : (
                       <>
                         <Send className="size-4" />
-                        Transfer
+                        {overLimit ? "View subscription" : "Transfer"}
                       </>
                     )}
                   </button>
                   {overLimit && (
-                    <p className="text-[11px] text-white text-center">Exceeds 5 GB limit</p>
+                    <p className="text-[11px] text-white text-center">Exceeds 100 MB free limit</p>
                   )}
                 </div>
               </>

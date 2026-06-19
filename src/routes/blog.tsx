@@ -23,7 +23,7 @@ const posts = [
     body: [
       "V Move You was built on a single idea: sending a large file to another human should not require an account, a credit card or a download client. You drop your files, you get a link, you share it. That's it.",
       "Behind the simple front door is a serious pipeline. Every transfer is uploaded in resumable chunks straight to V Move You's edge storage, so a flaky coffee-shop Wi-Fi connection won't cost you a 9 GB re-upload. Each link is unique, expirable and revocable from your browser.",
-      "We give every visitor 10 GB per transfer for free — five times what most legacy tools offer on their free tier — and we don't gate downloads behind ads, banners or signup walls. Recipients click, they get the file.",
+      "We give every visitor 100 MB per transfer for free, and we don't gate downloads behind ads, banners or signup walls. Recipients click, they get the file.",
     ],
   },
   {
@@ -52,9 +52,9 @@ const posts = [
     date: "May 28, 2026",
     read: "6 min read",
     body: [
-      "When you upload a 10 GB file, V Move You doesn't send it as one giant HTTP request. It's split into chunks (typically 6 MB each), uploaded in parallel, and reassembled on the server.",
+      "When you upload a large file, V Move You doesn't send it as one giant HTTP request. It's split into chunks (typically 6 MB each), uploaded in parallel, and reassembled on the server.",
       "Each chunk's progress is tracked locally in your browser. If your connection drops, only the in-flight chunks need to be retried — not the entire transfer. When you reopen the tab, the upload picks up where it left off.",
-      "This is the same protocol (tus) used by professional video pipelines. We use it because it's the only honest way to ship 10 GB over a real-world internet connection.",
+      "This is the same protocol (tus) used by professional video pipelines. We use it because it's the only honest way to ship larger files over a real-world internet connection.",
     ],
   },
   {

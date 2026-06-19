@@ -1,7 +1,7 @@
-import * as tus from "tus-js-client";
 import { supabase } from "@/integrations/supabase/client";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined;
 
 export interface UploadProgress {
   fileIndex: number;
@@ -14,12 +14,8 @@ export interface UploadProgress {
 async function getAuthToken(): Promise<string> {
   const { data } = await supabase.auth.getSession();
   if (data.session?.access_token) return data.session.access_token;
-  // No session — sign in anonymously so we get a real JWT for tus uploads.
-  const { data: anon, error } = await supabase.auth.signInAnonymously();
-  if (error || !anon.session?.access_token) {
-    throw new Error(error?.message ?? "Could not establish upload session");
-  }
-  return anon.session.access_token;
+  if (!SUPABASE_PUBLISHABLE_KEY) throw new Error("Upload service is not configured");
+  return SUPABASE_PUBLISHABLE_KEY;
 }
 
 export async function uploadFileResumable(opts: {
@@ -29,35 +25,13 @@ export async function uploadFileResumable(opts: {
   onProgress?: (p: { bytesUploaded: number; bytesTotal: number }) => void;
 }): Promise<void> {
   const { file, bucket, objectPath, onProgress } = opts;
-  const token = await getAuthToken();
-  void SUPABASE_URL;
+  await getAuthToken();
 
-  return new Promise((resolve, reject) => {
-    const upload = new tus.Upload(file, {
-      endpoint: `${SUPABASE_URL}/storage/v1/upload/resumable`,
-      retryDelays: [0, 1000, 3000, 5000, 10000],
-      headers: {
-        authorization: `Bearer ${token}`,
-        "x-upsert": "true",
-      },
-      uploadDataDuringCreation: true,
-      removeFingerprintOnSuccess: true,
-      metadata: {
-        bucketName: bucket,
-        objectName: objectPath,
-        contentType: file.type || "application/octet-stream",
-        cacheControl: "3600",
-      },
-      chunkSize: 6 * 1024 * 1024, // 6MB chunks required by Supabase resumable
-      onError: (err) => reject(err),
-      onProgress: (bytesUploaded, bytesTotal) =>
-        onProgress?.({ bytesUploaded, bytesTotal }),
-      onSuccess: () => resolve(),
-    });
-
-    upload.findPreviousUploads().then((previous) => {
-      if (previous.length) upload.resumeFromPreviousUpload(previous[0]);
-      upload.start();
-    });
+  const { error } = await supabase.storage.from(bucket).upload(objectPath, file, {
+    contentType: file.type || "application/octet-stream",
+    cacheControl: "3600",
+    upsert: false,
   });
+  if (error) throw error;
+  onProgress?.({ bytesUploaded: file.size, bytesTotal: file.size });
 }
