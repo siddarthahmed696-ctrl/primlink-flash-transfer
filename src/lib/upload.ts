@@ -36,7 +36,6 @@ export async function uploadFileResumable(opts: {
       retryDelays: [0, 1000, 3000, 5000, 10000],
       headers: {
         authorization: `Bearer ${token}`,
-        "x-upsert": "true",
       },
       uploadDataDuringCreation: true,
       removeFingerprintOnSuccess: true,
