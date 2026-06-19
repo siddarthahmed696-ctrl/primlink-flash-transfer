@@ -37,6 +37,8 @@ type Ad = {
 };
 
 function AdminPanel() {
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   const nav = useNavigate();
   const [checking, setChecking] = useState(true);
   const [ads, setAds] = useState<Ad[]>([]);
@@ -187,40 +189,61 @@ function AdminPanel() {
             {ads.map((ad) => (
               <div
                 key={ad.id}
-                className="rounded-xl border border-white/10 bg-black/40 p-4 flex items-center gap-4"
+                className="rounded-xl border border-white/10 bg-black/40 p-4"
               >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold truncate">{ad.heading}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded ${
-                        ad.is_active ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/60"
-                      }`}
-                    >
-                      {ad.is_active ? "Active" : "Paused"}
-                    </span>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold truncate">{ad.heading}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded ${
+                          ad.is_active ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/60"
+                        }`}
+                      >
+                        {ad.is_active ? "Active" : "Paused"}
+                      </span>
+                    </div>
+                    {ad.tagline && <p className="text-xs text-white/60 truncate">{ad.tagline}</p>}
+                    <p className="text-[11px] text-white/50 truncate mt-0.5">→ {ad.link_url}</p>
+                    <p className="text-[10px] text-white/40 mt-0.5">
+                      {ad.image_urls.length} image{ad.image_urls.length === 1 ? "" : "s"}
+                      {ad.video_url ? " · 1 video" : ""}
+                    </p>
                   </div>
-                  {ad.tagline && <p className="text-xs text-white/60 truncate">{ad.tagline}</p>}
-                  <p className="text-[11px] text-white/50 truncate mt-0.5">→ {ad.link_url}</p>
-                  <p className="text-[10px] text-white/40 mt-0.5">
-                    {ad.image_urls.length} image{ad.image_urls.length === 1 ? "" : "s"}
-                    {ad.video_url ? " · 1 video" : ""}
-                  </p>
+                  <button
+                    onClick={() => setEditingId(editingId === ad.id ? null : ad.id)}
+                    className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
+                  >
+                    {editingId === ad.id ? "Close" : "Edit"}
+                  </button>
+                  <button
+                    onClick={() => toggleActive(ad)}
+                    className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
+                  >
+                    {ad.is_active ? "Pause" : "Activate"}
+                  </button>
+                  <button
+                    onClick={() => deleteAd(ad)}
+                    className="text-xs px-3 py-1.5 rounded-md border border-red-500/30 text-red-300 hover:bg-red-500/10 inline-flex items-center gap-1"
+                  >
+                    <Trash2 className="size-3" /> Delete
+                  </button>
                 </div>
-                <button
-                  onClick={() => toggleActive(ad)}
-                  className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
-                >
-                  {ad.is_active ? "Pause" : "Activate"}
-                </button>
-                <button
-                  onClick={() => deleteAd(ad)}
-                  className="text-xs px-3 py-1.5 rounded-md border border-red-500/30 text-red-300 hover:bg-red-500/10 inline-flex items-center gap-1"
-                >
-                  <Trash2 className="size-3" /> Delete
-                </button>
+                {editingId === ad.id && (
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <AdEditForm
+                      ad={ad}
+                      onSaved={() => {
+                        setEditingId(null);
+                        loadAds();
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             ))}
+
+
           </div>
         </section>
       </main>
@@ -411,3 +434,224 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
     </div>
   );
 }
+
+function AdEditForm({ ad, onSaved }: { ad: Ad; onSaved: () => void }) {
+  const [heading, setHeading] = useState(ad.heading);
+  const [tagline, setTagline] = useState(ad.tagline ?? "");
+  const [link, setLink] = useState(ad.link_url);
+  const [existingImages, setExistingImages] = useState<string[]>(ad.image_urls);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingVideo, setExistingVideo] = useState<string | null>(ad.video_url);
+  const [newVideo, setNewVideo] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const imgRef = useRef<HTMLInputElement>(null);
+  const vidRef = useRef<HTMLInputElement>(null);
+
+  // Resolve previews for existing storage-path images
+  const [previews, setPreviews] = useState<Record<string, string>>({});
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const map: Record<string, string> = {};
+      for (const p of existingImages) {
+        if (/^https?:\/\//.test(p)) {
+          map[p] = p;
+        } else {
+          const { data } = await supabase.storage.from("ads").createSignedUrl(p, 60 * 60);
+          if (data?.signedUrl) map[p] = data.signedUrl;
+        }
+      }
+      if (!cancelled) setPreviews(map);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [existingImages]);
+
+  async function save() {
+    if (existingImages.length === 0 && newImages.length === 0) {
+      return toast.error("Keep at least 1 image");
+    }
+    setSaving(true);
+    try {
+      const addedPaths: string[] = [];
+      for (let i = 0; i < newImages.length; i++) {
+        const f = newImages[i];
+        const ext = (f.name.split(".").pop() || "jpg").toLowerCase();
+        const path = `${ad.id}/img-${Date.now()}-${i}.${ext}`;
+        const { error } = await supabase.storage.from("ads").upload(path, f, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+        if (error) throw error;
+        addedPaths.push(path);
+      }
+
+      let videoPath: string | null = existingVideo;
+      if (newVideo) {
+        const ext = (newVideo.name.split(".").pop() || "mp4").toLowerCase();
+        videoPath = `${ad.id}/video-${Date.now()}.${ext}`;
+        const { error } = await supabase.storage.from("ads").upload(videoPath, newVideo, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+        if (error) throw error;
+      }
+
+      // Remove images that the admin dropped (only storage paths, not external URLs)
+      const removed = ad.image_urls.filter(
+        (p) => !existingImages.includes(p) && !/^https?:\/\//.test(p),
+      );
+      if (removed.length) await supabase.storage.from("ads").remove(removed);
+
+      const { error: updErr } = await supabase
+        .from("site_ads")
+        .update({
+          heading: heading.trim() || ad.heading,
+          tagline: tagline.trim() || null,
+          link_url: link.trim() || ad.link_url,
+          image_urls: [...existingImages, ...addedPaths],
+          video_url: videoPath,
+        })
+        .eq("id", ad.id);
+      if (updErr) throw updErr;
+
+      toast.success("Ad updated");
+      onSaved();
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not update ad");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <input
+          value={heading}
+          onChange={(e) => setHeading(e.target.value)}
+          placeholder="Heading"
+          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
+        />
+        <input
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          placeholder="Destination link"
+          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
+        />
+      </div>
+      <input
+        value={tagline}
+        onChange={(e) => setTagline(e.target.value)}
+        placeholder="Tagline"
+        className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
+      />
+
+      <div>
+        <label className="text-xs text-white/70 block mb-1">Images</label>
+        <div className="flex flex-wrap gap-2">
+          {existingImages.map((p) => (
+            <div
+              key={p}
+              className="relative size-16 rounded-md overflow-hidden border border-white/10"
+            >
+              {previews[p] ? (
+                <img src={previews[p]} alt="" className="size-full object-cover" />
+              ) : (
+                <div className="size-full bg-white/5" />
+              )}
+              <button
+                onClick={() => setExistingImages(existingImages.filter((x) => x !== p))}
+                className="absolute top-0 right-0 bg-black/70 text-white p-0.5"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ))}
+          {newImages.map((f, i) => (
+            <div
+              key={i}
+              className="relative size-16 rounded-md overflow-hidden border border-primary/40"
+            >
+              <img src={URL.createObjectURL(f)} alt="" className="size-full object-cover" />
+              <button
+                onClick={() => setNewImages(newImages.filter((_, idx) => idx !== i))}
+                className="absolute top-0 right-0 bg-black/70 text-white p-0.5"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={() => imgRef.current?.click()}
+            className="size-16 rounded-md border-2 border-dashed border-white/15 text-white/60 hover:bg-white/5 grid place-items-center"
+          >
+            <Plus className="size-4" />
+          </button>
+        </div>
+        <input
+          ref={imgRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            if (!e.target.files) return;
+            setNewImages([...newImages, ...Array.from(e.target.files)]);
+            e.target.value = "";
+          }}
+        />
+      </div>
+
+      <div>
+        <label className="text-xs text-white/70 block mb-1">Video</label>
+        <div className="flex items-center gap-2 flex-wrap">
+          {existingVideo && !newVideo && (
+            <span className="text-xs text-white/70 inline-flex items-center gap-2 px-2 py-1 rounded border border-white/10">
+              <Video className="size-3" /> current video
+              <button
+                onClick={() => setExistingVideo(null)}
+                className="text-red-300 hover:text-red-200"
+              >
+                <X className="size-3" />
+              </button>
+            </span>
+          )}
+          {newVideo && (
+            <span className="text-xs text-white/70 inline-flex items-center gap-2 px-2 py-1 rounded border border-primary/40">
+              <Video className="size-3" /> {newVideo.name}
+              <button onClick={() => setNewVideo(null)} className="text-red-300 hover:text-red-200">
+                <X className="size-3" />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => vidRef.current?.click()}
+            className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
+          >
+            {existingVideo || newVideo ? "Replace video" : "Add video"}
+          </button>
+        </div>
+        <input
+          ref={vidRef}
+          type="file"
+          accept="video/*"
+          className="hidden"
+          onChange={(e) => setNewVideo(e.target.files?.[0] ?? null)}
+        />
+      </div>
+
+      <button
+        onClick={save}
+        disabled={saving}
+        className="inline-flex items-center justify-center gap-2 bg-primary text-white font-semibold px-5 py-2.5 rounded-lg disabled:opacity-50"
+      >
+        {saving ? <Loader2 className="size-4 animate-spin" /> : null}
+        Save changes
+      </button>
+    </div>
+  );
+}
+
