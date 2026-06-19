@@ -243,18 +243,7 @@ function AdminPanel() {
               </div>
             ))}
 
-                  className="text-xs px-3 py-1.5 rounded-md border border-white/15 hover:bg-white/5"
-                >
-                  {ad.is_active ? "Pause" : "Activate"}
-                </button>
-                <button
-                  onClick={() => deleteAd(ad)}
-                  className="text-xs px-3 py-1.5 rounded-md border border-red-500/30 text-red-300 hover:bg-red-500/10 inline-flex items-center gap-1"
-                >
-                  <Trash2 className="size-3" /> Delete
-                </button>
-              </div>
-            ))}
+
           </div>
         </section>
       </main>
