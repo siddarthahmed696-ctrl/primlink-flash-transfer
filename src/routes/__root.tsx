@@ -78,17 +78,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "V Move You — Send big files fast, free" },
+      { title: "V Move You — Send files up to 100 MB free" },
       {
         name: "description",
         content:
-          "Upload up to 5 GB and share a download link instantly. Free, fast, secure file transfer by V Move You.",
+          "Upload up to 100 MB and share a download link instantly. Free, fast, secure file transfer by V Move You.",
       },
       { name: "theme-color", content: "#0a1226" },
-      { property: "og:title", content: "V Move You — Send big files fast, free" },
-      { property: "og:description", content: "Upload up to 5 GB and share a secure download link instantly." },
-      { name: "twitter:title", content: "V Move You — Send big files fast, free" },
-      { name: "twitter:description", content: "Upload up to 5 GB and share a secure download link instantly." },
+      { property: "og:title", content: "V Move You — Send files up to 100 MB free" },
+      { property: "og:description", content: "Upload up to 100 MB and share a secure download link instantly." },
+      { name: "twitter:title", content: "V Move You — Send files up to 100 MB free" },
+      { name: "twitter:description", content: "Upload up to 100 MB and share a secure download link instantly." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e1c723d1-0b13-43f2-beff-35f59bfac590/id-preview-34ed61d4--cabfec49-2cad-441f-889e-a154237ea53e.lovable.app-1781529243774.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e1c723d1-0b13-43f2-beff-35f59bfac590/id-preview-34ed61d4--cabfec49-2cad-441f-889e-a154237ea53e.lovable.app-1781529243774.png" },
       { name: "twitter:card", content: "summary_large_image" },

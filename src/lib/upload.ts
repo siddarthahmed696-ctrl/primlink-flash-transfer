@@ -2,6 +2,8 @@ import * as tus from "tus-js-client";
 import { supabase } from "@/integrations/supabase/client";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined;
 
 export interface UploadProgress {
   fileIndex: number;
@@ -14,12 +16,8 @@ export interface UploadProgress {
 async function getAuthToken(): Promise<string> {
   const { data } = await supabase.auth.getSession();
   if (data.session?.access_token) return data.session.access_token;
-  // No session — sign in anonymously so we get a real JWT for tus uploads.
-  const { data: anon, error } = await supabase.auth.signInAnonymously();
-  if (error || !anon.session?.access_token) {
-    throw new Error(error?.message ?? "Could not establish upload session");
-  }
-  return anon.session.access_token;
+  if (!SUPABASE_PUBLISHABLE_KEY) throw new Error("Upload service is not configured");
+  return SUPABASE_PUBLISHABLE_KEY;
 }
 
 export async function uploadFileResumable(opts: {
