@@ -1,0 +1,7 @@
+name = "tanstack-start-app"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[pages_build_config]
+build_command = "bun run build"
+destination_dir = ".output/public"
