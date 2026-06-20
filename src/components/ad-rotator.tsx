@@ -70,13 +70,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
           className="absolute inset-0 h-full w-full object-cover ut-kenburns"
         />
       ) : (
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 75% 75%, rgba(220,38,38,0.45), transparent 60%), linear-gradient(135deg, #050505, #1a0606)",
-          }}
-        />
+        <div className="absolute inset-0 bg-black" />
       )}
       {/* subtle vignette so overlay text stays legible */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
