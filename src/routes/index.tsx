@@ -10,6 +10,7 @@ import {
   Send,
   Plus,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { uploadFileResumable } from "@/lib/upload";
 import { formatBytes } from "@/lib/format";
