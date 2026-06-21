@@ -318,17 +318,10 @@ function HomePage() {
                     </div>
                   )}
 
-                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" ariaLabel="Recipient email" />
-                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" ariaLabel="Your email" />
-                  <GlassInput placeholder="Title" value={title} onChange={setTitle} ariaLabel="Title" />
-                  <textarea
-                    placeholder="Message"
-                    aria-label="Message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    rows={2}
-                    className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none resize-none"
-                  />
+                  <p className="text-[11px] text-white/60 text-center px-1">
+                    No signup needed. Get a download link instantly. Links expire in 3 days.
+                  </p>
+
                 </div>
 
                 <div className="p-3 border-t border-white/10 space-y-2">
