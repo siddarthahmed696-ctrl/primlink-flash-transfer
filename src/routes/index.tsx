@@ -10,6 +10,7 @@ import {
   Send,
   Plus,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { uploadFileResumable } from "@/lib/upload";
 import { formatBytes } from "@/lib/format";
@@ -18,7 +19,6 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
-import { AuthModal } from "@/components/auth-modal";
 import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
 import { startVisitorHeartbeat } from "@/lib/visitors";
 
@@ -83,16 +83,11 @@ function HomePage() {
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   const [files, setFiles] = useState<File[]>([]);
-  const [recipient, setRecipient] = useState("");
-  const [sender, setSender] = useState("");
-  const [message, setMessage] = useState("");
-  const [title, setTitle] = useState("");
   const [progress, setProgress] = useState<PerFileProgress[]>([]);
   const [uploading, setUploading] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const totalBytes = useMemo(() => files.reduce((a, f) => a + f.size, 0), [files]);
@@ -116,10 +111,6 @@ function HomePage() {
     setFiles([]);
     setProgress([]);
     setShareUrl(null);
-    setRecipient("");
-    setSender("");
-    setMessage("");
-    setTitle("");
   };
 
   const handleUpload = async () => {
@@ -129,24 +120,15 @@ function HomePage() {
       return;
     }
 
-    // Email send requires a real (non-anonymous) account.
-    if (recipient.trim()) {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user || data.user.is_anonymous) {
-        setAuthOpen(true);
-        return;
-      }
-    }
-
     setUploading(true);
     setProgress(files.map((f) => ({ name: f.name, size: f.size, sent: 0 })));
 
     try {
       const { data: created, error: tErr } = await supabase.rpc("create_transfer", {
-        _title: title || null,
-        _message: message || null,
-        _sender_email: sender || null,
-        _recipient_email: recipient || null,
+        _title: null,
+        _message: null,
+        _sender_email: null,
+        _recipient_email: null,
         _total_size: totalBytes,
       } as never);
       const transfer = (Array.isArray(created) ? created[0] : created) as
@@ -197,35 +179,11 @@ function HomePage() {
         : window.location.origin;
       const url = `${base}/d/${transfer.share_code}`;
       setShareUrl(url);
-
-      // If a recipient email was provided, open the user's mail client
-      // pre-filled with the download link so the email actually goes out
-      // from their own address.
-      if (recipient.trim()) {
-        const subject = encodeURIComponent(
-          title?.trim() ? `${title} — files via V Move You` : `Files for you — V Move You`,
-        );
-        const bodyLines = [
-          `Hi,`,
-          ``,
-          message?.trim() ? message : `${sender || "Someone"} sent you ${files.length} file(s) (${formatBytes(totalBytes)}).`,
-          ``,
-          `Download here:`,
-          url,
-          ``,
-          `— Sent via V Move You`,
-        ];
-        const body = encodeURIComponent(bodyLines.join("\n"));
-        const cc = sender ? `&cc=${encodeURIComponent(sender)}` : "";
-        window.location.href = `mailto:${encodeURIComponent(recipient)}?subject=${subject}${cc}&body=${body}`;
-        toast.success("Opening your email app to send…");
-      } else {
-        toast.success("Transfer ready!");
-      }
-
+      toast.success("Transfer ready!");
     } catch (e) {
       console.error(e);
       toast.error("Upload failed. Please try again.");
+
     } finally {
       setUploading(false);
     }
@@ -360,17 +318,10 @@ function HomePage() {
                     </div>
                   )}
 
-                  <GlassInput placeholder="Email to" value={recipient} onChange={setRecipient} type="email" ariaLabel="Recipient email" />
-                  <GlassInput placeholder="Your email" value={sender} onChange={setSender} type="email" ariaLabel="Your email" />
-                  <GlassInput placeholder="Title" value={title} onChange={setTitle} ariaLabel="Title" />
-                  <textarea
-                    placeholder="Message"
-                    aria-label="Message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    rows={2}
-                    className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/40 focus:outline-none resize-none"
-                  />
+                  <p className="text-[11px] text-white/60 text-center px-1">
+                    No signup needed. Get a download link instantly. Links expire in 3 days.
+                  </p>
+
                 </div>
 
                 <div className="p-3 border-t border-white/10 space-y-2">
@@ -430,15 +381,7 @@ function HomePage() {
       </div>
 
       <CookieBanner />
-      <AuthModal
-        open={authOpen}
-        defaultEmail={sender}
-        onClose={() => setAuthOpen(false)}
-        onSuccess={() => {
-          setAuthOpen(false);
-          handleUpload();
-        }}
-      />
+
 
       <style>{`@keyframes ut_in { from { opacity: 0; transform: translate(-12px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }`}</style>
     </div>
