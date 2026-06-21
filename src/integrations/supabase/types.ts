@@ -191,6 +191,13 @@ export type Database = {
           share_code: string
         }[]
       }
+      get_download_path: {
+        Args: { _code: string; _file_id: string }
+        Returns: {
+          file_name: string
+          storage_path: string
+        }[]
+      }
       get_transfer_by_code: {
         Args: { _code: string }
         Returns: {
