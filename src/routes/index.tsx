@@ -83,16 +83,11 @@ function HomePage() {
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   const [files, setFiles] = useState<File[]>([]);
-  const [recipient, setRecipient] = useState("");
-  const [sender, setSender] = useState("");
-  const [message, setMessage] = useState("");
-  const [title, setTitle] = useState("");
   const [progress, setProgress] = useState<PerFileProgress[]>([]);
   const [uploading, setUploading] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const totalBytes = useMemo(() => files.reduce((a, f) => a + f.size, 0), [files]);
