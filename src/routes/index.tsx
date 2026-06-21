@@ -111,10 +111,6 @@ function HomePage() {
     setFiles([]);
     setProgress([]);
     setShareUrl(null);
-    setRecipient("");
-    setSender("");
-    setMessage("");
-    setTitle("");
   };
 
   const handleUpload = async () => {
@@ -124,24 +120,15 @@ function HomePage() {
       return;
     }
 
-    // Email send requires a real (non-anonymous) account.
-    if (recipient.trim()) {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user || data.user.is_anonymous) {
-        setAuthOpen(true);
-        return;
-      }
-    }
-
     setUploading(true);
     setProgress(files.map((f) => ({ name: f.name, size: f.size, sent: 0 })));
 
     try {
       const { data: created, error: tErr } = await supabase.rpc("create_transfer", {
-        _title: title || null,
-        _message: message || null,
-        _sender_email: sender || null,
-        _recipient_email: recipient || null,
+        _title: null,
+        _message: null,
+        _sender_email: null,
+        _recipient_email: null,
         _total_size: totalBytes,
       } as never);
       const transfer = (Array.isArray(created) ? created[0] : created) as
@@ -192,35 +179,11 @@ function HomePage() {
         : window.location.origin;
       const url = `${base}/d/${transfer.share_code}`;
       setShareUrl(url);
-
-      // If a recipient email was provided, open the user's mail client
-      // pre-filled with the download link so the email actually goes out
-      // from their own address.
-      if (recipient.trim()) {
-        const subject = encodeURIComponent(
-          title?.trim() ? `${title} — files via V Move You` : `Files for you — V Move You`,
-        );
-        const bodyLines = [
-          `Hi,`,
-          ``,
-          message?.trim() ? message : `${sender || "Someone"} sent you ${files.length} file(s) (${formatBytes(totalBytes)}).`,
-          ``,
-          `Download here:`,
-          url,
-          ``,
-          `— Sent via V Move You`,
-        ];
-        const body = encodeURIComponent(bodyLines.join("\n"));
-        const cc = sender ? `&cc=${encodeURIComponent(sender)}` : "";
-        window.location.href = `mailto:${encodeURIComponent(recipient)}?subject=${subject}${cc}&body=${body}`;
-        toast.success("Opening your email app to send…");
-      } else {
-        toast.success("Transfer ready!");
-      }
-
+      toast.success("Transfer ready!");
     } catch (e) {
       console.error(e);
       toast.error("Upload failed. Please try again.");
+
     } finally {
       setUploading(false);
     }
