@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/vmy-icon-v3.png";
+import logoAsset from "@/assets/vmy-icon-v3-cropped.png";
 
 type Props = { className?: string; size?: number };
 
