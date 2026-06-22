@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
-import { fetchActiveAds } from "@/lib/ads";
 import type { ResolvedAd } from "@/lib/ads";
+import { listActiveAdsSigned } from "@/lib/ads.functions";
 
 interface TransferRow {
   id: string;
@@ -290,10 +291,11 @@ function DownloadPage() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const getAds = useServerFn(listActiveAdsSigned);
   const [ads, setAds] = useState<ResolvedAd[]>([]);
   useEffect(() => {
-    fetchActiveAds().then(setAds).catch(() => {});
-  }, []);
+    getAds().then(setAds).catch(() => {});
+  }, [getAds]);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   return (
