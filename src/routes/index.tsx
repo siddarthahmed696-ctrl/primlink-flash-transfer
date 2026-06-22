@@ -21,6 +21,7 @@ import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
 import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
 import { startVisitorHeartbeat } from "@/lib/visitors";
+import { saveTransferHistory } from "@/lib/transfers";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -178,6 +179,15 @@ function HomePage() {
         ? `https://primlink-flash-transfer.lovable.app`
         : window.location.origin;
       const url = `${base}/d/${transfer.share_code}`;
+      saveTransferHistory({
+        id: transfer.id,
+        code: transfer.share_code,
+        fileCount: files.length,
+        totalSize: totalBytes,
+        downloadCount: 0,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 3 * 86400 * 1000).toISOString(),
+      });
       setShareUrl(url);
       toast.success("Transfer ready!");
     } catch (e) {
