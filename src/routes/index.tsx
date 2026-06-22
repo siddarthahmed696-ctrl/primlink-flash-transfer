@@ -18,10 +18,10 @@ import { uploadFileResumable } from "@/lib/upload";
 import { formatBytes } from "@/lib/format";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
+import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
-import type { ResolvedAd } from "@/lib/ads";
+
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 import { startVisitorHeartbeat } from "@/lib/visitors";
 import { saveTransferHistory } from "@/lib/transfers";
@@ -79,12 +79,11 @@ type PerFileProgress = { name: string; size: number; sent: number };
 function HomePage() {
   const navigate = useNavigate();
   const getAds = useServerFn(listActiveAdsSigned);
-  const [ads, setAds] = useState<ResolvedAd[]>([]);
+  const ads = useLiveAds(getAds);
   useEffect(() => {
-    getAds().then(setAds).catch(() => {});
     const stop = startVisitorHeartbeat();
     return stop;
-  }, [getAds]);
+  }, []);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   const [files, setFiles] = useState<File[]>([]);

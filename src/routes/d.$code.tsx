@@ -5,8 +5,8 @@ import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
-import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
-import type { ResolvedAd } from "@/lib/ads";
+import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD } from "@/components/ad-rotator";
+
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 
 interface TransferRow {
@@ -292,10 +292,7 @@ function DownloadPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const getAds = useServerFn(listActiveAdsSigned);
-  const [ads, setAds] = useState<ResolvedAd[]>([]);
-  useEffect(() => {
-    getAds().then(setAds).catch(() => {});
-  }, [getAds]);
+  const ads = useLiveAds(getAds);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   return (
