@@ -22,25 +22,26 @@ export function SiteHeader() {
 
   return (
     <header className="relative z-30">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-20 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div />
         <Link
           to="/"
-          className="flex items-center gap-2 font-display font-bold text-base sm:text-lg text-white drop-shadow min-w-0"
+          aria-label="V Move You"
+          className="justify-self-center flex items-center"
         >
-          <UTransferLogo size={28} />
-          <span className="truncate">
-            V Move You<span className="text-primary">.</span>
-          </span>
+          <UTransferLogo size={56} className="drop-shadow-[0_8px_24px_rgba(37,99,235,0.45)]" />
         </Link>
-        <nav className="hidden sm:flex items-center gap-5">{links}</nav>
-        <button
-          type="button"
-          className="sm:hidden text-white p-2 -mr-2"
-          aria-label="Menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="justify-self-end flex items-center">
+          <nav className="hidden sm:flex items-center gap-5">{links}</nav>
+          <button
+            type="button"
+            className="sm:hidden text-white p-2 -mr-2"
+            aria-label="Menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
       {open && (
         <div className="sm:hidden border-t border-white/10 bg-black/80 backdrop-blur">

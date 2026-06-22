@@ -1,16 +1,21 @@
-import logoUrl from "@/assets/vmy-icon.png";
+import logoAsset from "@/assets/vmy-icon-v2.png.asset.json";
 
 type Props = { className?: string; size?: number };
 
-export function UTransferLogo({ className, size = 32 }: Props) {
+export function UTransferLogo({ className, size = 48 }: Props) {
   return (
     <img
-      src={logoUrl}
+      src={logoAsset.url}
       alt=""
       width={size}
       height={size}
       className={className}
-      style={{ width: size, height: size, objectFit: "contain" }}
+      style={{
+        width: size,
+        height: size,
+        objectFit: "contain",
+        background: "transparent",
+      }}
       loading="eager"
       decoding="async"
     />
