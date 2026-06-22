@@ -292,10 +292,7 @@ function DownloadPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const getAds = useServerFn(listActiveAdsSigned);
-  const [ads, setAds] = useState<ResolvedAd[]>([]);
-  useEffect(() => {
-    getAds().then(setAds).catch(() => {});
-  }, [getAds]);
+  const ads = useLiveAds(getAds);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   return (
