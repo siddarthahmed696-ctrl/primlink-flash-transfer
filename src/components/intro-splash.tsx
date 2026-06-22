@@ -32,12 +32,7 @@ export function IntroSplash() {
       <div className="absolute inset-0 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
       <div className="relative flex flex-col items-center gap-4">
         <div className="animate-[ut_pop_900ms_cubic-bezier(.2,.9,.3,1.3)_both]">
-          <div className="rounded-3xl glow-red">
-            <UTransferLogo size={96} />
-          </div>
-        </div>
-        <div className="font-display text-3xl font-bold tracking-tight animate-[ut_fade_700ms_300ms_both]">
-          V Move You<span className="text-primary">.</span>
+          <UTransferLogo size={140} />
         </div>
       </div>
       <style>{`
