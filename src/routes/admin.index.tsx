@@ -334,7 +334,11 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
       onSaved();
     } catch (e: any) {
       console.error(e);
-      toast.error(`Could not save ad: ${e?.message || e}`);
+      const name = e?.name || e?.constructor?.name || "Error";
+      const msg = e?.message || String(e);
+      const status = e?.status ?? e?.statusCode ?? "";
+      const details = [name, msg, status ? `Status ${status}` : null].filter(Boolean).join(" · ");
+      toast.error(`Could not save ad: ${details}`);
     } finally {
       setSaving(false);
     }
@@ -527,7 +531,11 @@ function AdEditForm({ ad, onSaved }: { ad: Ad; onSaved: () => void }) {
       onSaved();
     } catch (e: any) {
       console.error(e);
-      toast.error(`Could not update ad: ${e?.message || e}`);
+      const name = e?.name || e?.constructor?.name || "Error";
+      const msg = e?.message || String(e);
+      const status = e?.status ?? e?.statusCode ?? "";
+      const details = [name, msg, status ? `Status ${status}` : null].filter(Boolean).join(" · ");
+      toast.error(`Could not update ad: ${details}`);
     } finally {
       setSaving(false);
     }
