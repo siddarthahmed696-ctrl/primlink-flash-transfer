@@ -25,14 +25,14 @@ export function IntroSplash() {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] grid place-items-center bg-background transition-opacity duration-700 ${
+      className={`fixed inset-0 z-[100] grid place-items-center bg-gradient-to-br from-black via-[#0a0a1a] to-blue-900 transition-opacity duration-700 ${
         stage === "out" ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
       <div className="absolute inset-0 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
       <div className="relative flex flex-col items-center gap-4">
         <div className="animate-[ut_pop_900ms_cubic-bezier(.2,.9,.3,1.3)_both]">
-          <UTransferLogo size={140} />
+          <UTransferLogo size={180} />
         </div>
       </div>
       <style>{`

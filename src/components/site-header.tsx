@@ -22,16 +22,15 @@ export function SiteHeader() {
 
   return (
     <header className="relative z-30">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-20 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <div />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-20 flex items-center justify-between gap-3">
         <Link
           to="/"
           aria-label="V Move You"
-          className="justify-self-center flex items-center"
+          className="flex items-center"
         >
-          <UTransferLogo size={56} className="drop-shadow-[0_8px_24px_rgba(37,99,235,0.45)]" />
+          <UTransferLogo size={80} className="drop-shadow-[0_8px_24px_rgba(37,99,235,0.45)]" />
         </Link>
-        <div className="justify-self-end flex items-center">
+        <div className="flex items-center">
           <nav className="hidden sm:flex items-center gap-5">{links}</nav>
           <button
             type="button"
@@ -44,7 +43,7 @@ export function SiteHeader() {
         </div>
       </div>
       {open && (
-        <div className="sm:hidden border-t border-white/10 bg-black/80 backdrop-blur">
+        <div className="sm:hidden border-t border-white/10 bg-gradient-to-b from-black via-[#0a0a1a] to-blue-900/90 backdrop-blur">
           <nav className="mx-auto max-w-7xl px-4 py-3 flex flex-col gap-3">{links}</nav>
         </div>
       )}
