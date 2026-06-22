@@ -4,8 +4,8 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy — V Move You" },
-      { name: "description", content: "How V Move You handles your data and privacy." },
+      { title: "Privacy Policy — V Move You" },
+      { name: "description", content: "Detailed privacy, legal, and acceptable use policy for V Move You file transfers." },
     ],
   }),
   component: PrivacyPage,
@@ -15,25 +15,122 @@ function PrivacyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-12">
-        <h1 className="text-4xl font-bold">Privacy</h1>
+      <main className="flex-1 mx-auto max-w-4xl w-full px-4 sm:px-6 py-10 sm:py-14">
+        <h1 className="text-3xl sm:text-4xl font-bold">Privacy Policy</h1>
         <p className="mt-4 text-muted-foreground">
-          We respect your privacy. V Move You requires no account to send files. We collect the
-          minimum data needed to operate the service.
+          This page explains how V Move You handles file transfers, transfer links, visitor data,
+          cookies, legal terms, and acceptable use. It is written for users of the V Move You website
+          and may be updated as the service changes.
         </p>
-        <h2 className="mt-8 text-2xl font-semibold">What we store</h2>
-        <p className="mt-2 text-muted-foreground">
-          Uploaded files and metadata (file name, size, optional message and email) are stored
-          temporarily and deleted automatically when the transfer expires.
-        </p>
-        <h2 className="mt-8 text-2xl font-semibold">Cookies</h2>
-        <p className="mt-2 text-muted-foreground">
-          We use only essential cookies needed for the service to function.
-        </p>
-        <h2 className="mt-8 text-2xl font-semibold">Your rights</h2>
-        <p className="mt-2 text-muted-foreground">
-          You may request deletion of any transfer you created by contacting us via V Move You.
-        </p>
+        <div className="mt-8 space-y-8 text-sm sm:text-base leading-7 text-muted-foreground">
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">1. What V Move You does</h2>
+            <p className="mt-2">
+              V Move You lets users upload files up to 100 MB and create a shareable download link.
+              The service is designed for temporary file sharing, not permanent storage. No account is
+              required to create a standard transfer link.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">2. Information we process</h2>
+            <p className="mt-2">When you use the service, we may process:</p>
+            <ul className="mt-3 list-disc pl-5 space-y-2">
+              <li>Uploaded files and technical file details, such as file name, type, and size.</li>
+              <li>Transfer metadata, such as creation time, expiry time, share code, and download count.</li>
+              <li>Basic visitor activity needed for live visitor counts and service protection.</li>
+              <li>Admin account details for authorized site administration.</li>
+            </ul>
+            <p className="mt-3">
+              The current upload flow does not require sender email, recipient email, or message text.
+              If optional fields are added later, that information will only be used to operate the
+              transfer feature shown on the site.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">3. File retention and expiry</h2>
+            <p className="mt-2">
+              Transfer links are temporary. New transfers are intended to expire after 3 days. After a
+              link expires, the download page may show the transfer as expired and access to the file
+              should no longer be available. V Move You may remove expired files and related metadata
+              as part of routine maintenance.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">4. Transfer history on your device</h2>
+            <p className="mt-2">
+              The Transfer History section saves recent transfer links in your browser on the device
+              used to create them. This helps you reopen links and check real download counts. This
+              local history is not a login account and may disappear if you clear browser data, use a
+              different browser, or switch devices.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">5. Downloads and share links</h2>
+            <p className="mt-2">
+              Anyone with a valid transfer link may open the download page until the link expires. You
+              should only share links with people you trust. Download counters are provided for basic
+              visibility and may increase when a download starts.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">6. Cookies and local storage</h2>
+            <p className="mt-2">
+              V Move You uses essential browser storage for features such as the cookie notice,
+              transfer history, admin session handling, and visitor session counting. These tools help
+              the site work properly and are not intended to sell personal information.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">7. Security</h2>
+            <p className="mt-2">
+              Uploaded files are stored in private storage and download access is provided through
+              time-limited links generated by the service. No website can guarantee absolute security,
+              so avoid uploading passwords, financial records, government IDs, or highly sensitive
+              confidential files unless you are comfortable sharing them through a temporary link.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">8. Acceptable use</h2>
+            <p className="mt-2">You agree not to use V Move You to:</p>
+            <ul className="mt-3 list-disc pl-5 space-y-2">
+              <li>Upload malware, viruses, phishing files, or harmful code.</li>
+              <li>Share illegal, abusive, harassing, exploitative, or hateful material.</li>
+              <li>Infringe copyrights, trademarks, privacy rights, or other third-party rights.</li>
+              <li>Attack, overload, scrape, reverse-engineer, or misuse the service.</li>
+              <li>Distribute spam or content that violates applicable law.</li>
+            </ul>
+            <p className="mt-3">
+              We may remove transfers, restrict access, or block misuse when we believe these rules
+              have been violated.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">9. Legal terms</h2>
+            <p className="mt-2">
+              The service is provided as available and without warranties to the maximum extent allowed
+              by law. V Move You is not responsible for files users choose to upload or share. Users are
+              responsible for making sure they have the right to share their content and for keeping
+              important files backed up elsewhere.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground">10. Requests and contact</h2>
+            <p className="mt-2">
+              If you need help with a transfer, want to request deletion, or believe content violates
+              this policy, contact V Move You through the website owner’s available contact channel and
+              include the transfer link or share code so the request can be reviewed.
+            </p>
+          </section>
+        </div>
       </main>
       <SiteFooter />
     </div>
