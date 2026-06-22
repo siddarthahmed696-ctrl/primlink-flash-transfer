@@ -525,9 +525,9 @@ function AdEditForm({ ad, onSaved }: { ad: Ad; onSaved: () => void }) {
 
       toast.success("Ad updated");
       onSaved();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("Could not update ad");
+      toast.error(`Could not update ad: ${e?.message || e}`);
     } finally {
       setSaving(false);
     }
