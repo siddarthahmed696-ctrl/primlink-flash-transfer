@@ -1,0 +1,3 @@
+CREATE POLICY "Authenticated can select ads bucket objects" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'ads');
+CREATE POLICY "Authenticated can insert ads bucket objects" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'ads');
+CREATE POLICY "Authenticated can delete ads bucket objects" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'ads');
