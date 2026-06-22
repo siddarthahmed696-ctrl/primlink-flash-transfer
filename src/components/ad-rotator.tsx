@@ -1,6 +1,41 @@
 import { useEffect, useState } from "react";
 import type { ResolvedAd } from "@/lib/ads";
 
+/**
+ * Keeps `ads` in sync with the latest active ads from the backend.
+ * Refetches on mount, every 60s, when the tab regains focus, and when
+ * it becomes visible again — so admin edits propagate to the live site
+ * within a minute (or immediately on next focus) without a redeploy.
+ */
+export function useLiveAds(getAds: () => Promise<ResolvedAd[]>): ResolvedAd[] {
+  const [ads, setAds] = useState<ResolvedAd[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      getAds()
+        .then((next) => {
+          if (!cancelled) setAds(next);
+        })
+        .catch(() => {});
+    };
+    load();
+    const id = setInterval(load, 60_000);
+    const onFocus = () => load();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [getAds]);
+  return ads;
+}
+
 export const FALLBACK_AD: ResolvedAd = {
   id: "fallback",
   heading: "",
