@@ -79,12 +79,11 @@ type PerFileProgress = { name: string; size: number; sent: number };
 function HomePage() {
   const navigate = useNavigate();
   const getAds = useServerFn(listActiveAdsSigned);
-  const [ads, setAds] = useState<ResolvedAd[]>([]);
+  const ads = useLiveAds(getAds);
   useEffect(() => {
-    getAds().then(setAds).catch(() => {});
     const stop = startVisitorHeartbeat();
     return stop;
-  }, [getAds]);
+  }, []);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   const [files, setFiles] = useState<File[]>([]);
