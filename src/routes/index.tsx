@@ -110,6 +110,46 @@ function HomePage() {
     }
     setFiles((prev) => [...prev, ...nextFiles]);
   }, [files, navigate]);
+
+  // Global window-level drag & drop — drop anywhere to add files
+  useEffect(() => {
+    let depth = 0;
+    const onDragEnter = (e: DragEvent) => {
+      if (!e.dataTransfer?.types?.includes("Files")) return;
+      e.preventDefault();
+      depth++;
+      setWindowDrag(true);
+    };
+    const onDragOver = (e: DragEvent) => {
+      if (!e.dataTransfer?.types?.includes("Files")) return;
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+    };
+    const onDragLeave = (e: DragEvent) => {
+      if (!e.dataTransfer?.types?.includes("Files")) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) setWindowDrag(false);
+    };
+    const onDrop = (e: DragEvent) => {
+      if (!e.dataTransfer?.files?.length) return;
+      e.preventDefault();
+      depth = 0;
+      setWindowDrag(false);
+      if (uploading || shareUrl) return;
+      onPickFiles(e.dataTransfer.files);
+    };
+    window.addEventListener("dragenter", onDragEnter);
+    window.addEventListener("dragover", onDragOver);
+    window.addEventListener("dragleave", onDragLeave);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragenter", onDragEnter);
+      window.removeEventListener("dragover", onDragOver);
+      window.removeEventListener("dragleave", onDragLeave);
+      window.removeEventListener("drop", onDrop);
+    };
+  }, [onPickFiles, uploading, shareUrl]);
+
   const removeFile = (i: number) => setFiles((prev) => prev.filter((_, idx) => idx !== i));
   const reset = () => {
     setFiles([]);
