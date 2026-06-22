@@ -1,8 +1,12 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Download, FileIcon, Loader2, ArrowLeft, Zap, Clock } from "lucide-react";
+import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBytes, formatExpiry } from "@/lib/format";
+import { SiteHeader } from "@/components/site-header";
+import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
+import { fetchActiveAds } from "@/lib/ads";
+import type { ResolvedAd } from "@/lib/ads";
 
 interface TransferRow {
   id: string;
@@ -37,7 +41,6 @@ export const Route = createFileRoute("/d/$code")({
       },
       { name: "robots", content: "noindex" },
     ],
-    // params used to satisfy type-checker
     ...(params.code ? {} : {}),
   }),
   component: DownloadPage,
@@ -65,6 +68,8 @@ export const Route = createFileRoute("/d/$code")({
     );
   },
 });
+
+const ACCENT = "#2563eb";
 
 function DownloadPage() {
   const { code } = Route.useParams();
@@ -144,12 +149,10 @@ function DownloadPage() {
     }
   };
 
-
-
   if (loading) {
     return (
       <Shell>
-        <div className="flex items-center justify-center py-24 text-muted-foreground">
+        <div className="flex items-center justify-center py-24 text-white/80">
           <Loader2 className="size-5 animate-spin mr-2" /> Loading transfer…
         </div>
       </Shell>
@@ -167,41 +170,50 @@ function DownloadPage() {
 
   return (
     <Shell>
-      <div className="mx-auto max-w-2xl px-6 py-12">
-        <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
-          <div className="p-6 sm:p-8 border-b border-border bg-gradient-to-b from-primary/10 to-transparent">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
+        <div
+          className="rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
+          style={{
+            background: "transparent",
+            backdropFilter: "blur(20px) saturate(140%)",
+            WebkitBackdropFilter: "blur(20px) saturate(140%)",
+            boxShadow: "0 30px 80px -20px rgba(0,0,0,0.6)",
+          }}
+        >
+          <div className="p-6 sm:p-8 border-b border-white/10">
+            <div className="flex items-center gap-2 text-xs text-white/70">
               <Clock className="size-3.5" />
               {expired ? "Expired" : `Expires in ${formatExpiry(transfer.expires_at)}`}
               <span>·</span>
               <span>{transfer.download_count} downloads</span>
             </div>
-            <h1 className="mt-2 text-2xl sm:text-3xl font-bold">
+            <h1 className="mt-2 text-2xl sm:text-3xl font-bold text-white">
               {transfer.title || "Files shared with you"}
             </h1>
             {transfer.sender_email && (
-              <p className="text-sm text-muted-foreground mt-1">
-                From <span className="text-foreground">{transfer.sender_email}</span>
+              <p className="text-sm text-white/70 mt-1">
+                From <span className="text-white">{transfer.sender_email}</span>
               </p>
             )}
             {transfer.message && (
-              <p className="mt-4 text-sm bg-surface border border-border rounded-lg p-3 whitespace-pre-wrap">
+              <p className="mt-4 text-sm bg-black/30 border border-white/10 rounded-lg p-3 whitespace-pre-wrap text-white/90">
                 {transfer.message}
               </p>
             )}
-            <div className="mt-5 text-sm text-muted-foreground">
+            <div className="mt-5 text-sm text-white/70">
               {files.length} {files.length === 1 ? "file" : "files"} ·{" "}
               {formatBytes(transfer.total_size)}
             </div>
           </div>
 
           {!expired && files.length > 0 && (
-            <div className="p-4 border-b border-border">
+            <div className="p-4 border-b border-white/10">
               {files.length === 1 ? (
                 <button
                   onClick={() => downloadOne(files[0])}
                   disabled={downloadingId === files[0].id}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
+                  className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg transition disabled:opacity-60"
+                  style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
                 >
                   {downloadingId === files[0].id ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -214,7 +226,8 @@ function DownloadPage() {
                 <button
                   onClick={downloadAll}
                   disabled={downloadingAll}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
+                  className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg transition disabled:opacity-60"
+                  style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
                 >
                   {downloadingAll ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -227,23 +240,21 @@ function DownloadPage() {
             </div>
           )}
 
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-white/10">
             {files.map((f) => (
               <li
                 key={f.id}
-                className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-surface-elevated/50"
+                className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-white/5"
               >
-                <FileIcon className="size-5 text-primary shrink-0" />
+                <FileIcon className="size-5 text-white/80 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-medium">{f.file_name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {formatBytes(f.file_size)}
-                  </div>
+                  <div className="truncate text-sm font-medium text-white">{f.file_name}</div>
+                  <div className="text-xs text-white/60">{formatBytes(f.file_size)}</div>
                 </div>
                 {expired ? (
                   <button
                     disabled
-                    className="inline-flex items-center gap-1.5 bg-surface border border-border text-sm px-3 py-1.5 rounded-md opacity-50"
+                    className="inline-flex items-center gap-1.5 bg-black/30 border border-white/10 text-sm text-white px-3 py-1.5 rounded-md opacity-50"
                   >
                     <Download className="size-3.5" />
                     Download
@@ -252,7 +263,7 @@ function DownloadPage() {
                   <button
                     onClick={() => downloadOne(f)}
                     disabled={downloadingId === f.id}
-                    className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition disabled:opacity-60"
+                    className="inline-flex items-center gap-1.5 bg-black/30 border border-white/15 hover:border-white/40 text-sm text-white px-3 py-1.5 rounded-md transition disabled:opacity-60"
                   >
                     {downloadingId === f.id ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -269,7 +280,7 @@ function DownloadPage() {
 
         <Link
           to="/"
-          className="mt-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          className="mt-6 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white"
         >
           <ArrowLeft className="size-4" /> Send your own transfer
         </Link>
@@ -279,20 +290,20 @@ function DownloadPage() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
+  const [ads, setAds] = useState<ResolvedAd[]>([]);
+  useEffect(() => {
+    fetchActiveAds().then(setAds).catch(() => {});
+  }, []);
+  const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border/60 bg-background/60 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center">
-          <Link to="/" className="flex items-center gap-2 font-display font-bold text-xl">
-            <span className="size-7 rounded-md bg-primary grid place-items-center text-primary-foreground">
-              <Zap className="size-4" />
-            </span>
-            V Move You<span className="text-primary">.</span>
-          </Link>
-        </div>
-      </header>
-      <div className="bg-grid opacity-40 absolute inset-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
-      <div className="relative">{children}</div>
+    <div className="min-h-screen text-white relative overflow-hidden">
+      <AdBackdrop ad={ad} />
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <SiteHeader />
+        <main className="flex-1">{children}</main>
+      </div>
+      <style>{`@keyframes ut_in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }
@@ -309,8 +320,8 @@ function ShellMessage({
   return (
     <Shell>
       <div className="mx-auto max-w-md text-center py-24 px-6">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="mt-2 text-muted-foreground">{body}</p>
+        <h1 className="text-2xl font-bold text-white">{title}</h1>
+        <p className="mt-2 text-white/70">{body}</p>
         <div className="mt-6">
           {action ?? (
             <Link

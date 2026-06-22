@@ -91,6 +91,7 @@ function HomePage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [windowDrag, setWindowDrag] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const totalBytes = useMemo(() => files.reduce((a, f) => a + f.size, 0), [files]);
@@ -109,6 +110,46 @@ function HomePage() {
     }
     setFiles((prev) => [...prev, ...nextFiles]);
   }, [files, navigate]);
+
+  // Global window-level drag & drop — drop anywhere to add files
+  useEffect(() => {
+    let depth = 0;
+    const onDragEnter = (e: DragEvent) => {
+      if (!e.dataTransfer?.types?.includes("Files")) return;
+      e.preventDefault();
+      depth++;
+      setWindowDrag(true);
+    };
+    const onDragOver = (e: DragEvent) => {
+      if (!e.dataTransfer?.types?.includes("Files")) return;
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+    };
+    const onDragLeave = (e: DragEvent) => {
+      if (!e.dataTransfer?.types?.includes("Files")) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) setWindowDrag(false);
+    };
+    const onDrop = (e: DragEvent) => {
+      if (!e.dataTransfer?.files?.length) return;
+      e.preventDefault();
+      depth = 0;
+      setWindowDrag(false);
+      if (uploading || shareUrl) return;
+      onPickFiles(e.dataTransfer.files);
+    };
+    window.addEventListener("dragenter", onDragEnter);
+    window.addEventListener("dragover", onDragOver);
+    window.addEventListener("dragleave", onDragLeave);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragenter", onDragEnter);
+      window.removeEventListener("dragover", onDragOver);
+      window.removeEventListener("dragleave", onDragLeave);
+      window.removeEventListener("drop", onDrop);
+    };
+  }, [onPickFiles, uploading, shareUrl]);
+
   const removeFile = (i: number) => setFiles((prev) => prev.filter((_, idx) => idx !== i));
   const reset = () => {
     setFiles([]);
@@ -215,6 +256,20 @@ function HomePage() {
     <div className="min-h-screen sm:h-screen flex flex-col sm:overflow-hidden text-foreground relative">
       <IntroSplash />
       <AdBackdrop ad={ad} />
+
+      {windowDrag && !uploading && !shareUrl && (
+        <div className="fixed inset-0 z-[90] pointer-events-none grid place-items-center p-6 animate-[ut_dropfade_200ms_ease-out_both]">
+          <div className="absolute inset-4 sm:inset-8 rounded-3xl border-2 border-dashed border-[#2563eb] bg-[#2563eb]/10 backdrop-blur-md" />
+          <div className="relative flex flex-col items-center gap-3 text-white">
+            <div className="size-16 rounded-2xl grid place-items-center bg-[#2563eb] shadow-[0_20px_60px_-10px_#2563eb] animate-bounce">
+              <Plus className="size-7" />
+            </div>
+            <div className="font-display text-2xl font-bold">Drop files anywhere</div>
+            <div className="text-sm text-white/80">We'll add them to your transfer</div>
+          </div>
+          <style>{`@keyframes ut_dropfade { from { opacity: 0; } to { opacity: 1; } }`}</style>
+        </div>
+      )}
 
       <div className="relative z-10 flex flex-col min-h-screen sm:h-full sm:pointer-events-none">
         <div className="pointer-events-auto">
