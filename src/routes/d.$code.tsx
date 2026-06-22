@@ -95,18 +95,46 @@ function DownloadPage() {
 
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
+  const startDownload = async (fileId: string, fileName: string) => {
+    const { data, error } = await supabase.rpc("get_download_path", {
+      _code: code,
+      _file_id: fileId,
+    } as never);
+    const row = (Array.isArray(data) ? data[0] : data) as
+      | { storage_path: string; file_name: string }
+      | null;
+    if (error || !row) throw new Error("File not found or expired");
+    const { data: signed, error: signErr } = await supabase.storage
+      .from("transfers")
+      .createSignedUrl(row.storage_path, 600, { download: fileName });
+    if (signErr || !signed?.signedUrl) throw new Error("Could not start download");
+    await supabase.rpc("increment_download_count", { _code: code } as never);
+    const a = document.createElement("a");
+    a.href = signed.signedUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  const downloadOne = async (f: FileRow) => {
+    setDownloadingId(f.id);
+    try {
+      await startDownload(f.id, f.file_name);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   const downloadAll = async () => {
     setDownloadingAll(true);
     try {
       for (const f of files) {
         try {
-          const a = document.createElement("a");
-          a.href = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`;
-          a.download = f.file_name;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          await new Promise((r) => setTimeout(r, 400));
+          await startDownload(f.id, f.file_name);
+          await new Promise((r) => setTimeout(r, 500));
         } catch (e) {
           console.error(e);
         }
@@ -115,6 +143,7 @@ function DownloadPage() {
       setDownloadingAll(false);
     }
   };
+
 
 
   if (loading) {
@@ -169,13 +198,18 @@ function DownloadPage() {
           {!expired && files.length > 0 && (
             <div className="p-4 border-b border-border">
               {files.length === 1 ? (
-                <a
-                  href={`/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(files[0].id)}`}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red"
+                <button
+                  onClick={() => downloadOne(files[0])}
+                  disabled={downloadingId === files[0].id}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
                 >
-                  <Download className="size-4" />
+                  {downloadingId === files[0].id ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Download className="size-4" />
+                  )}
                   Download ({formatBytes(transfer.total_size)})
-                </a>
+                </button>
               ) : (
                 <button
                   onClick={downloadAll}
@@ -215,10 +249,10 @@ function DownloadPage() {
                     Download
                   </button>
                 ) : (
-                  <a
-                    href={`/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`}
-                    onClick={() => setDownloadingId(f.id)}
-                    className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition"
+                  <button
+                    onClick={() => downloadOne(f)}
+                    disabled={downloadingId === f.id}
+                    className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition disabled:opacity-60"
                   >
                     {downloadingId === f.id ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -226,7 +260,7 @@ function DownloadPage() {
                       <Download className="size-3.5" />
                     )}
                     Download
-                  </a>
+                  </button>
                 )}
               </li>
             ))}
