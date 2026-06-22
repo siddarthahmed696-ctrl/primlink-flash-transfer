@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 
 export const Route = createFileRoute("/policy")({
+  beforeLoad: () => {
+    throw redirect({ to: "/privacy" });
+  },
   head: () => ({
     meta: [
       { title: "Acceptable Use Policy — V Move You" },
