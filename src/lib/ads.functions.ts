@@ -4,6 +4,7 @@ import type { ResolvedAd, SiteAd } from "@/lib/ads";
 
 async function signAdsPath(supabaseUrl: string, serviceKey: string, path: string) {
   if (/^https?:\/\//.test(path)) return path;
+  if (path.startsWith("/")) return path; // absolute site path (e.g. /__l5e/...)
   const resp = await fetch(
     `${supabaseUrl}/storage/v1/object/sign/ads/${path.split("/").map(encodeURIComponent).join("/")}`,
     {
