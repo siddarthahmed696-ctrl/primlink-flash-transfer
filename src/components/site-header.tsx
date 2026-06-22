@@ -11,6 +11,9 @@ export function SiteHeader() {
       <Link to="/blog" className={linkCls} activeProps={{ className: "text-white font-medium" }} onClick={() => setOpen(false)}>
         Blog
       </Link>
+      <Link to="/history" className={linkCls} activeProps={{ className: "text-white font-medium" }} onClick={() => setOpen(false)}>
+        History
+      </Link>
       <Link to="/legal" className={linkCls} activeProps={{ className: "text-white font-medium" }} onClick={() => setOpen(false)}>
         Legal
       </Link>
@@ -60,6 +63,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:h-10 flex flex-wrap items-center justify-between gap-2 text-xs text-white/60">
         <div>© {new Date().getFullYear()} V Move You</div>
         <div className="flex flex-wrap gap-4">
+          <Link to="/history" className="hover:text-white">History</Link>
           <Link to="/privacy" className="hover:text-white">Privacy</Link>
           <Link to="/policy" className="hover:text-white">Policy</Link>
           <Link to="/legal" className="hover:text-white">Legal</Link>
