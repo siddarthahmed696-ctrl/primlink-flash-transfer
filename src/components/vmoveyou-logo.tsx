@@ -1,12 +1,12 @@
-import iconAsset from "@/assets/vmy-icon.png.asset.json";
+import logoUrl from "@/assets/vmy-icon.png";
 
 type Props = { className?: string; size?: number };
 
 export function UTransferLogo({ className, size = 32 }: Props) {
   return (
     <img
-      src={iconAsset.url}
-      alt="V Move You"
+      src={logoUrl}
+      alt=""
       width={size}
       height={size}
       className={className}

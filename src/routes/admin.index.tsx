@@ -332,9 +332,9 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
       setImages([]);
       setVideo(null);
       onSaved();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("Could not save ad");
+      toast.error(`Could not save ad: ${e?.message || e}`);
     } finally {
       setSaving(false);
     }
