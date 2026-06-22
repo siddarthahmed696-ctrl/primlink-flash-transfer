@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Zap, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBytes, formatExpiry } from "@/lib/format";
-import { toast } from "sonner";
 
 interface TransferRow {
   id: string;
@@ -95,18 +94,6 @@ function DownloadPage() {
   }, [code]);
 
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
-
-  const downloadOne = async (f: FileRow) => {
-    setDownloadingId(f.id);
-    try {
-      window.location.href = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`;
-    } catch (e) {
-      console.error(e);
-      toast.error("Could not start download");
-    } finally {
-      setTimeout(() => setDownloadingId(null), 800);
-    }
-  };
 
   const downloadAll = async () => {
     setDownloadingAll(true);
