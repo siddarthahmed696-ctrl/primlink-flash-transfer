@@ -318,7 +318,7 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
       const { error: insErr } = await supabase.from("site_ads").insert({
         heading: heading.trim() || "Inspection",
         tagline: tagline.trim() || null,
-        link_url: link.trim() || "https://primlink.com",
+        link_url: normalizeUrl(link, "https://primlink.com"),
         image_urls: imagePaths,
         video_url: videoPath,
         is_active: true,
