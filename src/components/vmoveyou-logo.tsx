@@ -1,11 +1,11 @@
-import logoAsset from "@/assets/vmy-icon-v3-cropped.png.asset.json";
+import logoAsset from "@/assets/vmy-icon-v3-cropped.png";
 
 type Props = { className?: string; size?: number };
 
 export function UTransferLogo({ className, size = 48 }: Props) {
   return (
     <img
-      src={logoAsset.url}
+      src={logoAsset}
       alt=""
       width={size}
       height={size}
