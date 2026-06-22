@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Upload,
@@ -21,7 +21,7 @@ import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
 import type { ResolvedAd } from "@/lib/ads";
-import { listActiveAdsSigned } from "@/lib/ads.functions";
+import { fetchActiveAds } from "@/lib/ads";
 import { startVisitorHeartbeat } from "@/lib/visitors";
 import { saveTransferHistory } from "@/lib/transfers";
 
@@ -77,13 +77,12 @@ type PerFileProgress = { name: string; size: number; sent: number };
 
 function HomePage() {
   const navigate = useNavigate();
-  const fetchAds = useServerFn(listActiveAdsSigned);
   const [ads, setAds] = useState<ResolvedAd[]>([]);
   useEffect(() => {
-    fetchAds().then(setAds).catch(() => {});
+    fetchActiveAds().then(setAds).catch(() => {});
     const stop = startVisitorHeartbeat();
     return stop;
-  }, [fetchAds]);
+  }, []);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   const [files, setFiles] = useState<File[]>([]);
