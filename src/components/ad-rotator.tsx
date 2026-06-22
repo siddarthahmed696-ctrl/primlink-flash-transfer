@@ -12,24 +12,30 @@ export const FALLBACK_AD: ResolvedAd = {
   video: null,
 };
 
-// Pools every image from every active ad into a single rotating set.
-export function useAdRotator(ads: ResolvedAd[], _intervalMs?: number): ResolvedAd {
-  const pool: string[] = [];
-  for (const a of ads) for (const img of a.images) pool.push(img);
-  const video = ads.find((a) => a.video)?.video ?? null;
-  const firstLink = ads.find((a) => a.link_url)?.link_url ?? null;
-  return {
-    ...FALLBACK_AD,
-    link_url: firstLink || FALLBACK_AD.link_url,
-    images: pool,
-    video,
-  };
+/**
+ * Rotate through ads as discrete units. Each ad is shown for `intervalMs`
+ * (default 30s). The active ad keeps its own link, images and video — so
+ * edits made in /admin to any specific ad are reflected on the live site
+ * the next time that ad comes up in the rotation.
+ */
+export function useAdRotator(ads: ResolvedAd[], intervalMs = 30_000): ResolvedAd {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    setI(0);
+    if (ads.length < 2) return;
+    const id = setInterval(() => setI((n) => (n + 1) % ads.length), intervalMs);
+    return () => clearInterval(id);
+  }, [ads.length, intervalMs]);
+
+  if (!ads.length) return FALLBACK_AD;
+  return ads[i % ads.length];
 }
 
 /**
- * Fullscreen rotating image backdrop with smooth crossfade + Ken Burns zoom.
- * Each image stays ~8s. Two stacked layers swap so the new image fades in
- * over the previous one (no black flash, no jump-cut).
+ * Fullscreen ad backdrop. If the current ad has a video, it plays fullscreen
+ * and the whole surface links to that ad's `link_url`. Otherwise the ad's
+ * images crossfade as a slideshow.
  */
 export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
   const images = ad.images;
@@ -40,7 +46,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
     if (images.length < 2) return;
     const id = setInterval(() => setI((n) => (n + 1) % images.length), 8000);
     return () => clearInterval(id);
-  }, [images.length]);
+  }, [images.length, ad.id]);
 
   const current = images[i] ?? null;
 
@@ -49,7 +55,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
       href={ad.link_url || "https://primlink.com"}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Sponsored"
+      aria-label={ad.heading || "Sponsored"}
       className="fixed inset-0 z-0 block cursor-pointer overflow-hidden bg-black"
     >
       {ad.video ? (
@@ -72,7 +78,6 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
       ) : (
         <div className="absolute inset-0 bg-black" />
       )}
-      {/* subtle vignette so overlay text stays legible */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
       <style>{`
         @keyframes ut_kenburns {
