@@ -1,11 +1,8 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Zap, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { getDownloadUrl } from "@/lib/downloads.functions";
 import { formatBytes, formatExpiry } from "@/lib/format";
-import { toast } from "sonner";
 
 interface TransferRow {
   id: string;
@@ -71,7 +68,6 @@ export const Route = createFileRoute("/d/$code")({
 
 function DownloadPage() {
   const { code } = Route.useParams();
-  const fetchDownloadUrl = useServerFn(getDownloadUrl);
   const [transfer, setTransfer] = useState<TransferRow | null>(null);
   const [files, setFiles] = useState<FileRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,33 +95,13 @@ function DownloadPage() {
 
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
-  const bumpCounter = async () => {
-    if (!transfer) return;
-    await supabase.rpc("increment_download_count", { _code: code } as never);
-  };
-
-  const downloadOne = async (f: FileRow) => {
-    setDownloadingId(f.id);
-    try {
-      const { url } = await fetchDownloadUrl({ data: { code, fileId: f.id } });
-      window.location.href = url;
-      bumpCounter();
-    } catch (e) {
-      console.error(e);
-      toast.error("Could not start download");
-    } finally {
-      setTimeout(() => setDownloadingId(null), 800);
-    }
-  };
-
   const downloadAll = async () => {
     setDownloadingAll(true);
     try {
       for (const f of files) {
         try {
-          const { url } = await fetchDownloadUrl({ data: { code, fileId: f.id } });
           const a = document.createElement("a");
-          a.href = url;
+          a.href = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`;
           a.download = f.file_name;
           document.body.appendChild(a);
           a.click();
@@ -135,7 +111,6 @@ function DownloadPage() {
           console.error(e);
         }
       }
-      bumpCounter();
     } finally {
       setDownloadingAll(false);
     }
@@ -193,18 +168,28 @@ function DownloadPage() {
 
           {!expired && files.length > 0 && (
             <div className="p-4 border-b border-border">
-              <button
-                onClick={downloadAll}
-                disabled={downloadingAll}
-                className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
-              >
-                {downloadingAll ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
+              {files.length === 1 ? (
+                <a
+                  href={`/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(files[0].id)}`}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red"
+                >
                   <Download className="size-4" />
-                )}
-                Download all ({formatBytes(transfer.total_size)})
-              </button>
+                  Download ({formatBytes(transfer.total_size)})
+                </a>
+              ) : (
+                <button
+                  onClick={downloadAll}
+                  disabled={downloadingAll}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
+                >
+                  {downloadingAll ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Download className="size-4" />
+                  )}
+                  Download all ({formatBytes(transfer.total_size)})
+                </button>
+              )}
             </div>
           )}
 
@@ -221,18 +206,28 @@ function DownloadPage() {
                     {formatBytes(f.file_size)}
                   </div>
                 </div>
-                <button
-                  disabled={expired || downloadingId === f.id}
-                  onClick={() => downloadOne(f)}
-                  className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition disabled:opacity-50"
-                >
-                  {downloadingId === f.id ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
+                {expired ? (
+                  <button
+                    disabled
+                    className="inline-flex items-center gap-1.5 bg-surface border border-border text-sm px-3 py-1.5 rounded-md opacity-50"
+                  >
                     <Download className="size-3.5" />
-                  )}
-                  Download
-                </button>
+                    Download
+                  </button>
+                ) : (
+                  <a
+                    href={`/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`}
+                    onClick={() => setDownloadingId(f.id)}
+                    className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition"
+                  >
+                    {downloadingId === f.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
+                    Download
+                  </a>
+                )}
               </li>
             ))}
           </ul>

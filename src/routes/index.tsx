@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Upload,
@@ -19,8 +20,10 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
-import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
+import type { ResolvedAd } from "@/lib/ads";
+import { listActiveAdsSigned } from "@/lib/ads.functions";
 import { startVisitorHeartbeat } from "@/lib/visitors";
+import { saveTransferHistory } from "@/lib/transfers";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,12 +77,13 @@ type PerFileProgress = { name: string; size: number; sent: number };
 
 function HomePage() {
   const navigate = useNavigate();
+  const fetchAds = useServerFn(listActiveAdsSigned);
   const [ads, setAds] = useState<ResolvedAd[]>([]);
   useEffect(() => {
-    fetchActiveAds().then(setAds).catch(() => {});
+    fetchAds().then(setAds).catch(() => {});
     const stop = startVisitorHeartbeat();
     return stop;
-  }, []);
+  }, [fetchAds]);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   const [files, setFiles] = useState<File[]>([]);
@@ -178,6 +182,15 @@ function HomePage() {
         ? `https://primlink-flash-transfer.lovable.app`
         : window.location.origin;
       const url = `${base}/d/${transfer.share_code}`;
+      saveTransferHistory({
+        id: transfer.id,
+        code: transfer.share_code,
+        fileCount: files.length,
+        totalSize: totalBytes,
+        downloadCount: 0,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 3 * 86400 * 1000).toISOString(),
+      });
       setShareUrl(url);
       toast.success("Transfer ready!");
     } catch (e) {

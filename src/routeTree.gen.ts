@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PolicyRouteImport } from './routes/policy'
 import { Route as LegalRouteImport } from './routes/legal'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -21,6 +22,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as DCodeRouteImport } from './routes/d.$code'
 import { Route as AlternativesWetransferRouteImport } from './routes/alternatives.wetransfer'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ApiPublicDownloadCodeFileIdRouteImport } from './routes/api.public.download.$code.$fileId'
 
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
@@ -45,6 +47,11 @@ const PolicyRoute = PolicyRouteImport.update({
 const LegalRoute = LegalRouteImport.update({
   id: '/legal',
   path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -82,11 +89,18 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicDownloadCodeFileIdRoute =
+  ApiPublicDownloadCodeFileIdRouteImport.update({
+    id: '/api/public/download/$code/$fileId',
+    path: '/api/public/download/$code/$fileId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
+  '/history': typeof HistoryRoute
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
@@ -96,10 +110,12 @@ export interface FileRoutesByFullPath {
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/download/$code/$fileId': typeof ApiPublicDownloadCodeFileIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
+  '/history': typeof HistoryRoute
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
@@ -109,12 +125,14 @@ export interface FileRoutesByTo {
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/download/$code/$fileId': typeof ApiPublicDownloadCodeFileIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
+  '/history': typeof HistoryRoute
   '/legal': typeof LegalRoute
   '/policy': typeof PolicyRoute
   '/privacy': typeof PrivacyRoute
@@ -124,6 +142,7 @@ export interface FileRoutesById {
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/download/$code/$fileId': typeof ApiPublicDownloadCodeFileIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/blog'
+    | '/history'
     | '/legal'
     | '/policy'
     | '/privacy'
@@ -140,10 +160,12 @@ export interface FileRouteTypes {
     | '/alternatives/wetransfer'
     | '/d/$code'
     | '/admin/'
+    | '/api/public/download/$code/$fileId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/blog'
+    | '/history'
     | '/legal'
     | '/policy'
     | '/privacy'
@@ -153,11 +175,13 @@ export interface FileRouteTypes {
     | '/alternatives/wetransfer'
     | '/d/$code'
     | '/admin'
+    | '/api/public/download/$code/$fileId'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/blog'
+    | '/history'
     | '/legal'
     | '/policy'
     | '/privacy'
@@ -167,12 +191,14 @@ export interface FileRouteTypes {
     | '/alternatives/wetransfer'
     | '/d/$code'
     | '/admin/'
+    | '/api/public/download/$code/$fileId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   BlogRoute: typeof BlogRoute
+  HistoryRoute: typeof HistoryRoute
   LegalRoute: typeof LegalRoute
   PolicyRoute: typeof PolicyRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -180,6 +206,7 @@ export interface RootRouteChildren {
   SubscriptionRoute: typeof SubscriptionRoute
   AlternativesWetransferRoute: typeof AlternativesWetransferRoute
   DCodeRoute: typeof DCodeRoute
+  ApiPublicDownloadCodeFileIdRoute: typeof ApiPublicDownloadCodeFileIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -217,6 +244,13 @@ declare module '@tanstack/react-router' {
       path: '/legal'
       fullPath: '/legal'
       preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -268,6 +302,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/download/$code/$fileId': {
+      id: '/api/public/download/$code/$fileId'
+      path: '/api/public/download/$code/$fileId'
+      fullPath: '/api/public/download/$code/$fileId'
+      preLoaderRoute: typeof ApiPublicDownloadCodeFileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -287,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   BlogRoute: BlogRoute,
+  HistoryRoute: HistoryRoute,
   LegalRoute: LegalRoute,
   PolicyRoute: PolicyRoute,
   PrivacyRoute: PrivacyRoute,
@@ -294,6 +336,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubscriptionRoute: SubscriptionRoute,
   AlternativesWetransferRoute: AlternativesWetransferRoute,
   DCodeRoute: DCodeRoute,
+  ApiPublicDownloadCodeFileIdRoute: ApiPublicDownloadCodeFileIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
