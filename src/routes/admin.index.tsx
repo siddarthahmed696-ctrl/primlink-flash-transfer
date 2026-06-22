@@ -38,6 +38,11 @@ type Ad = {
   created_at: string;
 };
 
+function normalizeUrl(value: string, fallback: string) {
+  const trimmed = value.trim() || fallback;
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
 function AdminPanel() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -512,7 +517,7 @@ function AdEditForm({ ad, onSaved }: { ad: Ad; onSaved: () => void }) {
           id: ad.id,
           heading: heading.trim() || ad.heading,
           tagline: tagline.trim() || null,
-          link_url: link.trim() || ad.link_url,
+          link_url: normalizeUrl(link, ad.link_url),
           image_urls: [...existingImages, ...addedPaths],
           video_url: videoPath,
         },
