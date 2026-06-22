@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/vmy-icon-v2.png.asset.json";
+import logoAsset from "@/assets/vmy-icon-v3-cropped.png.asset.json";
 
 type Props = { className?: string; size?: number };
 
