@@ -181,18 +181,28 @@ function DownloadPage() {
 
           {!expired && files.length > 0 && (
             <div className="p-4 border-b border-border">
-              <button
-                onClick={downloadAll}
-                disabled={downloadingAll}
-                className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
-              >
-                {downloadingAll ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
+              {files.length === 1 ? (
+                <a
+                  href={`/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(files[0].id)}`}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red"
+                >
                   <Download className="size-4" />
-                )}
-                Download all ({formatBytes(transfer.total_size)})
-              </button>
+                  Download ({formatBytes(transfer.total_size)})
+                </a>
+              ) : (
+                <button
+                  onClick={downloadAll}
+                  disabled={downloadingAll}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-3 rounded-lg hover:bg-primary-glow transition glow-red disabled:opacity-60"
+                >
+                  {downloadingAll ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Download className="size-4" />
+                  )}
+                  Download all ({formatBytes(transfer.total_size)})
+                </button>
+              )}
             </div>
           )}
 
@@ -209,18 +219,28 @@ function DownloadPage() {
                     {formatBytes(f.file_size)}
                   </div>
                 </div>
-                <button
-                  disabled={expired || downloadingId === f.id}
-                  onClick={() => downloadOne(f)}
-                  className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition disabled:opacity-50"
-                >
-                  {downloadingId === f.id ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
+                {expired ? (
+                  <button
+                    disabled
+                    className="inline-flex items-center gap-1.5 bg-surface border border-border text-sm px-3 py-1.5 rounded-md opacity-50"
+                  >
                     <Download className="size-3.5" />
-                  )}
-                  Download
-                </button>
+                    Download
+                  </button>
+                ) : (
+                  <a
+                    href={`/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`}
+                    onClick={() => setDownloadingId(f.id)}
+                    className="inline-flex items-center gap-1.5 bg-surface border border-border hover:border-primary text-sm px-3 py-1.5 rounded-md transition"
+                  >
+                    {downloadingId === f.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
+                    Download
+                  </a>
+                )}
               </li>
             ))}
           </ul>
