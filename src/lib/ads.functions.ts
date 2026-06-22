@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { ResolvedAd, SiteAd } from "@/lib/ads";
 
@@ -30,6 +29,7 @@ export const listActiveAdsSigned = createServerFn({ method: "GET" }).handler(asy
 
   if (!SUPABASE_URL || !PUBLISHABLE_KEY || !SERVICE_KEY) return [] satisfies ResolvedAd[];
 
+  const { createClient } = await import("@supabase/supabase-js");
   const supabasePublic = createClient<Database>(SUPABASE_URL, PUBLISHABLE_KEY, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
   });
