@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { updateAdMetadata } from "@/lib/admin.functions";
 import {
   Activity,
   ImagePlus,
@@ -436,6 +438,7 @@ function AdForm({ onSaved }: { onSaved: () => void }) {
 }
 
 function AdEditForm({ ad, onSaved }: { ad: Ad; onSaved: () => void }) {
+  const updateAd = useServerFn(updateAdMetadata);
   const [heading, setHeading] = useState(ad.heading);
   const [tagline, setTagline] = useState(ad.tagline ?? "");
   const [link, setLink] = useState(ad.link_url);
@@ -504,17 +507,16 @@ function AdEditForm({ ad, onSaved }: { ad: Ad; onSaved: () => void }) {
       );
       if (removed.length) await supabase.storage.from("ads").remove(removed);
 
-      const { error: updErr } = await supabase
-        .from("site_ads")
-        .update({
+      await updateAd({
+        data: {
+          id: ad.id,
           heading: heading.trim() || ad.heading,
           tagline: tagline.trim() || null,
           link_url: link.trim() || ad.link_url,
           image_urls: [...existingImages, ...addedPaths],
           video_url: videoPath,
-        })
-        .eq("id", ad.id);
-      if (updErr) throw updErr;
+        },
+      });
 
       toast.success("Ad updated");
       onSaved();
