@@ -1,9 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Zap, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { getDownloadUrl } from "@/lib/downloads.functions";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { toast } from "sonner";
 
@@ -71,7 +69,6 @@ export const Route = createFileRoute("/d/$code")({
 
 function DownloadPage() {
   const { code } = Route.useParams();
-  const fetchDownloadUrl = useServerFn(getDownloadUrl);
   const [transfer, setTransfer] = useState<TransferRow | null>(null);
   const [files, setFiles] = useState<FileRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,9 +104,7 @@ function DownloadPage() {
   const downloadOne = async (f: FileRow) => {
     setDownloadingId(f.id);
     try {
-      const { url } = await fetchDownloadUrl({ data: { code, fileId: f.id } });
-      window.location.href = url;
-      bumpCounter();
+      window.location.href = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`;
     } catch (e) {
       console.error(e);
       toast.error("Could not start download");
@@ -123,9 +118,8 @@ function DownloadPage() {
     try {
       for (const f of files) {
         try {
-          const { url } = await fetchDownloadUrl({ data: { code, fileId: f.id } });
           const a = document.createElement("a");
-          a.href = url;
+          a.href = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(f.id)}`;
           a.download = f.file_name;
           document.body.appendChild(a);
           a.click();
@@ -135,7 +129,7 @@ function DownloadPage() {
           console.error(e);
         }
       }
-      bumpCounter();
+      if (files.length === 0) await bumpCounter();
     } finally {
       setDownloadingAll(false);
     }

@@ -21,6 +21,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as DCodeRouteImport } from './routes/d.$code'
 import { Route as AlternativesWetransferRouteImport } from './routes/alternatives.wetransfer'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ApiPublicDownloadCodeFileIdRouteImport } from './routes/api.public.download.$code.$fileId'
 
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
@@ -82,6 +83,12 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicDownloadCodeFileIdRoute =
+  ApiPublicDownloadCodeFileIdRouteImport.update({
+    id: '/api/public/download/$code/$fileId',
+    path: '/api/public/download/$code/$fileId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/download/$code/$fileId': typeof ApiPublicDownloadCodeFileIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/download/$code/$fileId': typeof ApiPublicDownloadCodeFileIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/alternatives/wetransfer': typeof AlternativesWetransferRoute
   '/d/$code': typeof DCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/download/$code/$fileId': typeof ApiPublicDownloadCodeFileIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/alternatives/wetransfer'
     | '/d/$code'
     | '/admin/'
+    | '/api/public/download/$code/$fileId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/alternatives/wetransfer'
     | '/d/$code'
     | '/admin'
+    | '/api/public/download/$code/$fileId'
   id:
     | '__root__'
     | '/'
@@ -167,6 +179,7 @@ export interface FileRouteTypes {
     | '/alternatives/wetransfer'
     | '/d/$code'
     | '/admin/'
+    | '/api/public/download/$code/$fileId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -180,6 +193,7 @@ export interface RootRouteChildren {
   SubscriptionRoute: typeof SubscriptionRoute
   AlternativesWetransferRoute: typeof AlternativesWetransferRoute
   DCodeRoute: typeof DCodeRoute
+  ApiPublicDownloadCodeFileIdRoute: typeof ApiPublicDownloadCodeFileIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -268,6 +282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/download/$code/$fileId': {
+      id: '/api/public/download/$code/$fileId'
+      path: '/api/public/download/$code/$fileId'
+      fullPath: '/api/public/download/$code/$fileId'
+      preLoaderRoute: typeof ApiPublicDownloadCodeFileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -294,6 +315,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubscriptionRoute: SubscriptionRoute,
   AlternativesWetransferRoute: AlternativesWetransferRoute,
   DCodeRoute: DCodeRoute,
+  ApiPublicDownloadCodeFileIdRoute: ApiPublicDownloadCodeFileIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
