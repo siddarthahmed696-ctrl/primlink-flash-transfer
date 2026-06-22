@@ -21,7 +21,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
-import type { ResolvedAd } from "@/lib/ads";
+
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 import { startVisitorHeartbeat } from "@/lib/visitors";
 import { saveTransferHistory } from "@/lib/transfers";
