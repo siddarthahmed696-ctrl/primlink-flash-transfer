@@ -96,11 +96,6 @@ function DownloadPage() {
 
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
-  const bumpCounter = async () => {
-    if (!transfer) return;
-    await supabase.rpc("increment_download_count", { _code: code } as never);
-  };
-
   const downloadOne = async (f: FileRow) => {
     setDownloadingId(f.id);
     try {
@@ -129,7 +124,6 @@ function DownloadPage() {
           console.error(e);
         }
       }
-      if (files.length === 0) await bumpCounter();
     } finally {
       setDownloadingAll(false);
     }
