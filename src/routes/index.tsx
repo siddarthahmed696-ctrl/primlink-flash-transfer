@@ -257,6 +257,20 @@ function HomePage() {
       <IntroSplash />
       <AdBackdrop ad={ad} />
 
+      {windowDrag && !uploading && !shareUrl && (
+        <div className="fixed inset-0 z-[90] pointer-events-none grid place-items-center p-6 animate-[ut_dropfade_200ms_ease-out_both]">
+          <div className="absolute inset-4 sm:inset-8 rounded-3xl border-2 border-dashed border-[#2563eb] bg-[#2563eb]/10 backdrop-blur-md" />
+          <div className="relative flex flex-col items-center gap-3 text-white">
+            <div className="size-16 rounded-2xl grid place-items-center bg-[#2563eb] shadow-[0_20px_60px_-10px_#2563eb] animate-bounce">
+              <Plus className="size-7" />
+            </div>
+            <div className="font-display text-2xl font-bold">Drop files anywhere</div>
+            <div className="text-sm text-white/80">We'll add them to your transfer</div>
+          </div>
+          <style>{`@keyframes ut_dropfade { from { opacity: 0; } to { opacity: 1; } }`}</style>
+        </div>
+      )}
+
       <div className="relative z-10 flex flex-col min-h-screen sm:h-full sm:pointer-events-none">
         <div className="pointer-events-auto">
           <SiteHeader />
