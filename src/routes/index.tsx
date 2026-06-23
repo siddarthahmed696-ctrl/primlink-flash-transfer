@@ -257,6 +257,7 @@ function HomePage() {
     <div className="min-h-screen sm:h-screen flex flex-col sm:overflow-hidden text-foreground relative">
       <IntroSplash />
       <AdBackdrop ad={ad} />
+      <AdsSyncStatusIndicator status={adsStatus} className="fixed bottom-3 left-3 z-30" />
 
       {windowDrag && !uploading && !shareUrl && (
         <div className="fixed inset-0 z-[90] pointer-events-none grid place-items-center p-6 animate-[ut_dropfade_200ms_ease-out_both]">
