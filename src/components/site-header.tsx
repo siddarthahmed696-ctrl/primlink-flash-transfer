@@ -12,18 +12,19 @@ function BouncingBrand() {
     return () => clearTimeout(t);
   }, [step]);
 
-  const wordCls = "inline-block animate-[ut_bounce_600ms_ease-out_both]";
+  const wordCls = "inline-block animate-[ut_bounce_600ms_ease-out_both] font-black";
   return (
-    <div className="pointer-events-none select-none flex items-baseline gap-2 text-2xl sm:text-3xl font-extrabold tracking-tight">
+    <div className="pointer-events-none select-none flex items-baseline gap-2 text-2xl sm:text-3xl font-black tracking-tight">
       {step >= 0 && (
-        <span key={`v-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:1.5px_white]`}>V</span>
+        <span key={`v-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:0.5px_white]`}>V</span>
       )}
       {step >= 1 && (
-        <span key={`m-${step}`} className={`${wordCls} text-black [-webkit-text-stroke:1.5px_white]`}>Move</span>
+        <span key={`m-${step}`} className={`${wordCls} text-black [-webkit-text-stroke:0.5px_white]`}>Move</span>
       )}
       {step >= 2 && (
-        <span key={`y-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:1.5px_white]`}>You</span>
+        <span key={`y-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:0.5px_white]`}>You</span>
       )}
+
       <style>{`
         @keyframes ut_bounce {
           0% { transform: translateY(-40px) scale(.6); opacity: 0; }
