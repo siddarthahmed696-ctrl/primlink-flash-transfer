@@ -31,8 +31,8 @@ export function IntroSplash() {
     >
       <div className="absolute inset-0 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
       <div className="relative flex flex-col items-center gap-4">
-        <div className="animate-[ut_pop_900ms_cubic-bezier(.2,.9,.3,1.3)_both]">
-          <UTransferLogo size={180} />
+        <div className="w-32 max-w-[70vw] sm:w-44 animate-[ut_pop_900ms_cubic-bezier(.2,.9,.3,1.3)_both]">
+          <UTransferLogo size={180} className="h-auto w-full" sizes="(max-width: 640px) 128px, 180px" />
         </div>
       </div>
       <style>{`
