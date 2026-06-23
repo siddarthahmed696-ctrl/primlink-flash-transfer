@@ -5,7 +5,7 @@ import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
-import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD } from "@/components/ad-rotator";
+import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
 
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 
