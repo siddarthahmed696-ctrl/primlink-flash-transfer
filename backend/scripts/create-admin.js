@@ -1,8 +1,9 @@
-// Create an admin user:  node scripts/create-admin.js admin@example.com SuperSecret123
+// Usage: node scripts/create-admin.js admin@example.com SuperSecret123
 require("dotenv").config();
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const mysql = require("mysql2/promise");
+const Admin = require("../models/Admin");
+const { pool } = require("../config/db");
 
 (async () => {
   const [, , email, password] = process.argv;
@@ -11,18 +12,7 @@ const mysql = require("mysql2/promise");
     process.exit(1);
   }
   const hash = await bcrypt.hash(password, 12);
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-  });
-  await conn.query(
-    `INSERT INTO admins (id, email, password_hash) VALUES (?, ?, ?)
-     ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)`,
-    [crypto.randomUUID(), email, hash]
-  );
-  await conn.end();
+  await Admin.upsert(crypto.randomUUID(), email, hash);
+  await pool.end();
   console.log(`✅ Admin ready: ${email}`);
 })().catch((e) => { console.error(e); process.exit(1); });
