@@ -212,8 +212,19 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ad.heading || "Sponsored"}
-      className="fixed inset-0 z-0 block cursor-pointer overflow-hidden bg-white"
+      className="fixed inset-0 z-0 block cursor-pointer overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse 80% 60% at 50% 40%, #1e3a8a 0%, #0c1a3a 45%, #05060f 100%)",
+      }}
     >
+      {/* floating tilted brand tiles (decorative) */}
+      <span aria-hidden className="ut-tile ut-tile-1" />
+      <span aria-hidden className="ut-tile ut-tile-2" />
+      <span aria-hidden className="ut-tile ut-tile-3" />
+      <span aria-hidden className="ut-tile ut-tile-4" />
+      <span aria-hidden className="ut-tile ut-tile-5" />
+
       {ad.video ? (
         <video
           key={ad.video}
@@ -231,20 +242,40 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
           alt=""
           className="absolute inset-0 h-full w-full object-contain"
         />
-      ) : (
-        <div className="absolute inset-0 bg-white" />
-      )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/20" />
-
+      ) : null}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
 
       <style>{`
-        @keyframes ut_kenburns {
-          0%   { opacity: 0; transform: scale(1.08) translate3d(0,0,0); filter: blur(8px); }
-          12%  { opacity: 1; filter: blur(0); }
-          100% { opacity: 1; transform: scale(1.0) translate3d(-1%, -1%, 0); filter: blur(0); }
+        @keyframes ut_float {
+          0%, 100% { transform: translate3d(0,0,0) rotate(var(--r, 0deg)); }
+          50%      { transform: translate3d(0,-14px,0) rotate(calc(var(--r, 0deg) + 2deg)); }
         }
-        .ut-kenburns { animation: ut_kenburns 8s ease-out both; will-change: transform, opacity, filter; }
+        .ut-tile {
+          position: absolute;
+          display: block;
+          border-radius: 18px;
+          background: linear-gradient(135deg, rgba(37,99,235,0.55), rgba(15,23,42,0.85));
+          box-shadow:
+            0 30px 60px -20px rgba(0,0,0,0.7),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+          border: 1px solid rgba(96,165,250,0.25);
+          opacity: 0.85;
+          animation: ut_float 9s ease-in-out infinite;
+          will-change: transform;
+        }
+        .ut-tile-1 { width: 130px; height: 130px; top: 18%;  left: 6%;  --r: -14deg; animation-delay: 0s;   }
+        .ut-tile-2 { width: 90px;  height: 90px;  top: 58%;  left: 10%; --r: 10deg;  animation-delay: 1.2s; opacity: .75; }
+        .ut-tile-3 { width: 110px; height: 110px; top: 22%;  right: 8%; --r: 12deg;  animation-delay: 0.6s; }
+        .ut-tile-4 { width: 95px;  height: 95px;  top: 62%;  right: 6%; --r: -8deg;  animation-delay: 1.8s; }
+        .ut-tile-5 { width: 70px;  height: 70px;  top: 80%;  right: 18%; --r: 18deg; animation-delay: 2.4s; opacity: .7; }
+        @media (max-width: 640px) {
+          .ut-tile-1 { width: 80px; height: 80px; }
+          .ut-tile-2, .ut-tile-4 { width: 60px; height: 60px; }
+          .ut-tile-3 { width: 70px; height: 70px; }
+          .ut-tile-5 { display: none; }
+        }
       `}</style>
     </a>
   );
 }
+
