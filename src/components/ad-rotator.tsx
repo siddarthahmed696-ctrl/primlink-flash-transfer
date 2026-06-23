@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import type { ResolvedAd } from "@/lib/ads";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Keeps `ads` in sync with the latest active ads from the backend.
- * Refetches on mount, every 60s, when the tab regains focus, and when
- * it becomes visible again — so admin edits propagate to the live site
- * within a minute (or immediately on next focus) without a redeploy.
+ * Refetches on mount, when the tab regains focus, when it becomes visible,
+ * on a short fallback interval, and immediately when the ads table changes —
+ * so admin edits propagate to deployed frontends without a redeploy.
  */
 export function useLiveAds(getAds: () => Promise<ResolvedAd[]>): ResolvedAd[] {
   const [ads, setAds] = useState<ResolvedAd[]>([]);
@@ -19,7 +20,11 @@ export function useLiveAds(getAds: () => Promise<ResolvedAd[]>): ResolvedAd[] {
         .catch(() => {});
     };
     load();
-    const id = setInterval(load, 60_000);
+    const id = setInterval(load, 15_000);
+    const ch = supabase
+      .channel("public-site-ads-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_ads" }, load)
+      .subscribe();
     const onFocus = () => load();
     const onVisible = () => {
       if (document.visibilityState === "visible") load();
@@ -29,6 +34,7 @@ export function useLiveAds(getAds: () => Promise<ResolvedAd[]>): ResolvedAd[] {
     return () => {
       cancelled = true;
       clearInterval(id);
+      supabase.removeChannel(ch);
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onVisible);
     };
