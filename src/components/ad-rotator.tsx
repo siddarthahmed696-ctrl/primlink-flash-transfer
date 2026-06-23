@@ -39,17 +39,20 @@ export function useLiveAds(getAds: () => Promise<ResolvedAd[]>): LiveAds {
           setLastSyncedAt(new Date());
           setLastError(null);
         })
-        .catch(async (err) => {
+        .catch(async (err: unknown) => {
           if (cancelled) return;
           try {
             const next = await fetchActiveAds();
             if (cancelled) return;
             setAds(next);
             setLastSyncedAt(new Date());
-            setLastError(next.length ? null : err?.message ?? String(err));
-          } catch (fallbackErr) {
+            const message = err instanceof Error ? err.message : String(err);
+            setLastError(next.length ? null : message);
+          } catch (fallbackErr: unknown) {
             if (cancelled) return;
-            setLastError(fallbackErr?.message ?? err?.message ?? String(err));
+            const fallbackMessage = fallbackErr instanceof Error ? fallbackErr.message : null;
+            const message = err instanceof Error ? err.message : String(err);
+            setLastError(fallbackMessage ?? message);
           }
         });
     };

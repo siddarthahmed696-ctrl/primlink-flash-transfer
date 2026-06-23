@@ -12,8 +12,6 @@ export function UTransferLogo({ className, size = 48, sizes }: Props) {
       className={`block max-h-full max-w-full object-contain ${className ?? ""}`}
       sizes={sizes}
       style={{
-        width: size,
-        height: size,
         background: "transparent",
       }}
       loading="eager"
