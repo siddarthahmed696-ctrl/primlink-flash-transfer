@@ -31,9 +31,13 @@ function BouncingBrand() {
           75% { transform: translateY(-4px) scale(.97); }
           100% { transform: translateY(0) scale(1); opacity: 1; }
         }
-        @keyframes ut_spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        @keyframes ut_shake {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          15% { transform: translate(-3px, -1px) rotate(-2deg); }
+          30% { transform: translate(3px, 1px) rotate(2deg); }
+          45% { transform: translate(-3px, 1px) rotate(-1deg); }
+          60% { transform: translate(3px, -1px) rotate(1deg); }
+          75% { transform: translate(-1px, 0) rotate(0deg); }
         }
       `}</style>
     </div>
