@@ -222,19 +222,20 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
           muted
           loop
           playsInline
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-contain"
         />
       ) : current ? (
         <img
           key={current}
           src={current}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover ut-kenburns"
+          className="absolute inset-0 h-full w-full object-contain"
         />
       ) : (
         <div className="absolute inset-0 bg-black" />
       )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
+
       <style>{`
         @keyframes ut_kenburns {
           0%   { opacity: 0; transform: scale(1.08) translate3d(0,0,0); filter: blur(8px); }
