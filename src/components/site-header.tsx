@@ -16,13 +16,13 @@ function BouncingBrand() {
   return (
     <div className="pointer-events-none select-none flex items-baseline gap-2 text-2xl sm:text-3xl font-extrabold tracking-tight">
       {step >= 0 && (
-        <span key={`v-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)]`}>V</span>
+        <span key={`v-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:1.5px_white]`}>V</span>
       )}
       {step >= 1 && (
-        <span key={`m-${step}`} className={`${wordCls} text-black`}>Move</span>
+        <span key={`m-${step}`} className={`${wordCls} text-black [-webkit-text-stroke:1.5px_white]`}>Move</span>
       )}
       {step >= 2 && (
-        <span key={`y-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)]`}>You</span>
+        <span key={`y-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:1.5px_white]`}>You</span>
       )}
       <style>{`
         @keyframes ut_bounce {
@@ -31,9 +31,13 @@ function BouncingBrand() {
           75% { transform: translateY(-4px) scale(.97); }
           100% { transform: translateY(0) scale(1); opacity: 1; }
         }
-        @keyframes ut_spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        @keyframes ut_shake {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          15% { transform: translate(-3px, -1px) rotate(-2deg); }
+          30% { transform: translate(3px, 1px) rotate(2deg); }
+          45% { transform: translate(-3px, 1px) rotate(-1deg); }
+          60% { transform: translate(3px, -1px) rotate(1deg); }
+          75% { transform: translate(-1px, 0) rotate(0deg); }
         }
       `}</style>
     </div>
@@ -60,21 +64,25 @@ export function SiteHeader() {
 
   return (
     <header className="relative z-30 bg-transparent">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <BouncingBrand />
+      </div>
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:h-20 sm:px-6">
-        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center overflow-visible">
+        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center overflow-visible relative z-10">
           <span
             className="inline-block"
-            style={{ animation: "ut_spin 8s linear infinite" }}
+            style={{
+              animation: "ut_shake 2.5s ease-in-out infinite",
+              filter: "drop-shadow(0 -1.5px 0 white) drop-shadow(0 1.5px 0 white) drop-shadow(-1.5px 0 0 white) drop-shadow(1.5px 0 0 white)",
+            }}
           >
             <UTransferLogo size={64} sizes="(max-width: 640px) 48px, 64px" className="h-12 w-12 shrink-0 sm:h-16 sm:w-16" />
           </span>
         </Link>
 
-        <div className="flex justify-center">
-          <BouncingBrand />
-        </div>
+        <div />
 
-        <div className="flex shrink-0 items-center justify-end">
+        <div className="flex shrink-0 items-center justify-end relative z-10">
           <nav className="hidden sm:flex items-center gap-6">{links}</nav>
           <button
             type="button"

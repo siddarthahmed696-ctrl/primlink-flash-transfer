@@ -260,7 +260,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
             inset 0 1px 0 rgba(255,255,255,0.12);
           border: 1px solid rgba(96,165,250,0.25);
           opacity: 0.85;
-          animation: ut_float 9s ease-in-out infinite;
+          animation: ut_float 6s ease-in-out infinite;
           will-change: transform;
         }
         .ut-tile-1 { width: 130px; height: 130px; top: 18%;  left: 6%;  --r: -14deg; animation-delay: 0s;   }
