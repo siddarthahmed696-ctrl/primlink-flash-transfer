@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
+import { AdsSyncStatusIndicator, useLiveAds } from "@/components/ad-rotator";
+import { listActiveAdsSigned } from "@/lib/ads.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { updateAdMetadata } from "@/lib/admin.functions";
 import {
@@ -50,6 +52,8 @@ function AdminPanel() {
   const [checking, setChecking] = useState(true);
   const [ads, setAds] = useState<Ad[]>([]);
   const [live, setLive] = useState(0);
+  const getAds = useServerFn(listActiveAdsSigned);
+  const { status: adsStatus } = useLiveAds(getAds);
 
   useEffect(() => {
     (async () => {
@@ -138,6 +142,7 @@ function AdminPanel() {
             V Move You <span className="text-primary">Admin</span>
           </Link>
           <div className="flex items-center gap-4">
+            <AdsSyncStatusIndicator status={adsStatus} />
             <div className="flex items-center gap-2 text-sm">
               <span className="relative flex size-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />

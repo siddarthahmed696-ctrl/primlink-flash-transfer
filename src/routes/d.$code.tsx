@@ -5,7 +5,7 @@ import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
-import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD } from "@/components/ad-rotator";
+import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
 
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 
@@ -292,12 +292,13 @@ function DownloadPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const getAds = useServerFn(listActiveAdsSigned);
-  const ads = useLiveAds(getAds);
+  const { ads, status: adsStatus } = useLiveAds(getAds);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       <AdBackdrop ad={ad} />
+      <AdsSyncStatusIndicator status={adsStatus} className="fixed bottom-3 left-3 z-30" />
       <div className="relative z-10 min-h-screen flex flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>

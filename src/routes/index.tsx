@@ -18,7 +18,7 @@ import { uploadFileResumable } from "@/lib/upload";
 import { formatBytes } from "@/lib/format";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD } from "@/components/ad-rotator";
+import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
 import { IntroSplash } from "@/components/intro-splash";
 import { CookieBanner } from "@/components/cookie-banner";
 
@@ -79,7 +79,7 @@ type PerFileProgress = { name: string; size: number; sent: number };
 function HomePage() {
   const navigate = useNavigate();
   const getAds = useServerFn(listActiveAdsSigned);
-  const ads = useLiveAds(getAds);
+  const { ads, status: adsStatus } = useLiveAds(getAds);
   useEffect(() => {
     const stop = startVisitorHeartbeat();
     return stop;
@@ -257,6 +257,7 @@ function HomePage() {
     <div className="min-h-screen sm:h-screen flex flex-col sm:overflow-hidden text-foreground relative">
       <IntroSplash />
       <AdBackdrop ad={ad} />
+      <AdsSyncStatusIndicator status={adsStatus} className="fixed bottom-3 left-3 z-30" />
 
       {windowDrag && !uploading && !shareUrl && (
         <div className="fixed inset-0 z-[90] pointer-events-none grid place-items-center p-6 animate-[ut_dropfade_200ms_ease-out_both]">
