@@ -24,10 +24,10 @@ export function SiteHeader() {
   return (
     <header className="relative z-30 bg-white border-b border-slate-200 shadow-sm">
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 sm:flex sm:h-20 sm:justify-between sm:px-6">
-        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center gap-2 overflow-visible">
+        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center overflow-visible">
           <UTransferLogo size={72} sizes="(max-width: 640px) 56px, 72px" className="h-14 w-14 shrink-0 sm:h-[72px] sm:w-[72px]" />
-          <span className="truncate text-base sm:text-lg font-bold text-slate-900">V Move You</span>
         </Link>
+
         <div className="flex shrink-0 items-center">
           <nav className="hidden sm:flex items-center gap-6">{links}</nav>
           <button

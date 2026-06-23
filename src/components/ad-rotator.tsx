@@ -212,7 +212,7 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={ad.heading || "Sponsored"}
-      className="fixed inset-0 z-0 block cursor-pointer overflow-hidden bg-black"
+      className="fixed inset-0 z-0 block cursor-pointer overflow-hidden bg-white"
     >
       {ad.video ? (
         <video
@@ -232,9 +232,10 @@ export function AdBackdrop({ ad }: { ad: ResolvedAd }) {
           className="absolute inset-0 h-full w-full object-contain"
         />
       ) : (
-        <div className="absolute inset-0 bg-black" />
+        <div className="absolute inset-0 bg-white" />
       )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/20" />
+
 
       <style>{`
         @keyframes ut_kenburns {
