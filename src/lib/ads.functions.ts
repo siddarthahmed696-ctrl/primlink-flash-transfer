@@ -5,6 +5,7 @@ import type { ResolvedAd, SiteAd } from "@/lib/ads";
 async function signAdsPath(supabaseUrl: string, serviceKey: string, path: string) {
   if (/^https?:\/\//.test(path)) return path;
   if (path.startsWith("/")) return path; // absolute site path (e.g. /__l5e/...)
+  return `${supabaseUrl}/storage/v1/object/public/ads/${path.split("/").map(encodeURIComponent).join("/")}`;
   const resp = await fetch(
     `${supabaseUrl}/storage/v1/object/sign/ads/${path.split("/").map(encodeURIComponent).join("/")}`,
     {
@@ -28,7 +29,7 @@ export const listActiveAdsSigned = createServerFn({ method: "GET" }).handler(asy
   const PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-  if (!SUPABASE_URL || !PUBLISHABLE_KEY || !SERVICE_KEY) return [] satisfies ResolvedAd[];
+  if (!SUPABASE_URL || !PUBLISHABLE_KEY) return [] satisfies ResolvedAd[];
 
   const { createClient } = await import("@supabase/supabase-js");
   const supabasePublic = createClient<Database>(SUPABASE_URL, PUBLISHABLE_KEY, {
