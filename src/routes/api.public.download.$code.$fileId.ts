@@ -26,10 +26,10 @@ export const Route = createFileRoute("/api/public/download/$code/$fileId")({
             return new Response("Could not start download", { status: 500 });
           }
 
-          await supabaseAdmin
-            .rpc("increment_download_count", { _code: params.code })
-            .then(() => {})
-            .catch(() => {});
+          try {
+            await supabaseAdmin.rpc("increment_download_count", { _code: params.code });
+          } catch {}
+
 
           return Response.redirect(signed.signedUrl, 302);
         } catch (err) {
