@@ -292,12 +292,13 @@ function DownloadPage() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const getAds = useServerFn(listActiveAdsSigned);
-  const ads = useLiveAds(getAds);
+  const { ads, status: adsStatus } = useLiveAds(getAds);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       <AdBackdrop ad={ad} />
+      <AdsSyncStatusIndicator status={adsStatus} className="fixed bottom-3 left-3 z-30" />
       <div className="relative z-10 min-h-screen flex flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>
