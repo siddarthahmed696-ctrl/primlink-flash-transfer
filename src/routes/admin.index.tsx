@@ -142,6 +142,7 @@ function AdminPanel() {
             V Move You <span className="text-primary">Admin</span>
           </Link>
           <div className="flex items-center gap-4">
+            <AdsSyncStatusIndicator status={adsStatus} />
             <div className="flex items-center gap-2 text-sm">
               <span className="relative flex size-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
