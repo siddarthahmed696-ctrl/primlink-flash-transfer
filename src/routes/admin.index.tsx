@@ -52,6 +52,8 @@ function AdminPanel() {
   const [checking, setChecking] = useState(true);
   const [ads, setAds] = useState<Ad[]>([]);
   const [live, setLive] = useState(0);
+  const getAds = useServerFn(listActiveAdsSigned);
+  const { status: adsStatus } = useLiveAds(getAds);
 
   useEffect(() => {
     (async () => {
