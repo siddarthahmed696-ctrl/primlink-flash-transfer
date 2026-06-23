@@ -79,7 +79,7 @@ type PerFileProgress = { name: string; size: number; sent: number };
 function HomePage() {
   const navigate = useNavigate();
   const getAds = useServerFn(listActiveAdsSigned);
-  const ads = useLiveAds(getAds);
+  const { ads, status: adsStatus } = useLiveAds(getAds);
   useEffect(() => {
     const stop = startVisitorHeartbeat();
     return stop;
