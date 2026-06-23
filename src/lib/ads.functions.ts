@@ -2,32 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import type { Database } from "@/integrations/supabase/types";
 import type { ResolvedAd, SiteAd } from "@/lib/ads";
 
-async function signAdsPath(supabaseUrl: string, serviceKey: string, path: string) {
+function resolveAdsPath(supabaseUrl: string, path: string) {
   if (/^https?:\/\//.test(path)) return path;
   if (path.startsWith("/")) return path; // absolute site path (e.g. /__l5e/...)
   return `${supabaseUrl}/storage/v1/object/public/ads/${path.split("/").map(encodeURIComponent).join("/")}`;
-  const resp = await fetch(
-    `${supabaseUrl}/storage/v1/object/sign/ads/${path.split("/").map(encodeURIComponent).join("/")}`,
-    {
-      method: "POST",
-      headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ expiresIn: 60 * 60 * 6 }),
-    },
-  );
-  if (!resp.ok) return null;
-  const signed = (await resp.json()) as { signedURL?: string; signedUrl?: string };
-  const signedPath = signed.signedURL || signed.signedUrl;
-  return signedPath ? `${supabaseUrl}/storage/v1${signedPath}` : null;
 }
 
 export const listActiveAdsSigned = createServerFn({ method: "GET" }).handler(async () => {
   const SUPABASE_URL = process.env.SUPABASE_URL!;
   const PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
-  const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
   if (!SUPABASE_URL || !PUBLISHABLE_KEY) return [] satisfies ResolvedAd[];
 
@@ -47,9 +30,9 @@ export const listActiveAdsSigned = createServerFn({ method: "GET" }).handler(asy
   return Promise.all(
     ads.map(async (ad) => {
       const images = (
-        await Promise.all((ad.image_urls ?? []).map((path) => signAdsPath(SUPABASE_URL, SERVICE_KEY, path)))
+        await Promise.all((ad.image_urls ?? []).map((path) => resolveAdsPath(SUPABASE_URL, path)))
       ).filter((url): url is string => !!url);
-      const video = ad.video_url ? await signAdsPath(SUPABASE_URL, SERVICE_KEY, ad.video_url) : null;
+      const video = ad.video_url ? resolveAdsPath(SUPABASE_URL, ad.video_url) : null;
       return {
         id: ad.id,
         heading: ad.heading,
