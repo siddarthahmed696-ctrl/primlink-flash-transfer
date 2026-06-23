@@ -1,7 +1,7 @@
 {
   "name": "vmoveyou-backend",
-  "version": "1.0.0",
-  "description": "V Move You backend for Hostinger (Node.js + MySQL)",
+  "version": "1.1.0",
+  "description": "V Move You backend (Node.js + MySQL) — MVC structure for Hostinger",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
