@@ -2,10 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import type { Database } from "@/integrations/supabase/types";
 import type { ResolvedAd, SiteAd } from "@/lib/ads";
 
-function resolveAdsPath(supabaseUrl: string, path: string) {
+type SbClient = ReturnType<typeof import("@supabase/supabase-js").createClient<Database>>;
+
+async function signAdsPath(supabase: SbClient, path: string) {
   if (/^https?:\/\//.test(path)) return path;
   if (path.startsWith("/")) return path; // absolute site path (e.g. /__l5e/...)
-  return `${supabaseUrl}/storage/v1/object/public/ads/${path.split("/").map(encodeURIComponent).join("/")}`;
+  const { data } = await supabase.storage.from("ads").createSignedUrl(path, 60 * 60 * 6);
+  return data?.signedUrl ?? null;
 }
 
 export const listActiveAdsSigned = createServerFn({ method: "GET" }).handler(async () => {
@@ -30,9 +33,9 @@ export const listActiveAdsSigned = createServerFn({ method: "GET" }).handler(asy
   return Promise.all(
     ads.map(async (ad) => {
       const images = (
-        await Promise.all((ad.image_urls ?? []).map((path) => resolveAdsPath(SUPABASE_URL, path)))
+        await Promise.all((ad.image_urls ?? []).map((path) => signAdsPath(supabasePublic, path)))
       ).filter((url): url is string => !!url);
-      const video = ad.video_url ? resolveAdsPath(SUPABASE_URL, ad.video_url) : null;
+      const video = ad.video_url ? await signAdsPath(supabasePublic, ad.video_url) : null;
       return {
         id: ad.id,
         heading: ad.heading,

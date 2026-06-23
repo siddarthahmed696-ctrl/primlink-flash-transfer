@@ -20,8 +20,8 @@ async function signOne(path: string): Promise<string | null> {
   // Accept either a storage path or an already-absolute URL.
   if (/^https?:\/\//.test(path)) return path;
   if (path.startsWith("/")) return path;
-  const { data } = supabase.storage.from("ads").getPublicUrl(path);
-  return data.publicUrl;
+  const { data } = await supabase.storage.from("ads").createSignedUrl(path, 60 * 60 * 6);
+  return data?.signedUrl ?? null;
 }
 
 export async function fetchActiveAds(): Promise<ResolvedAd[]> {
