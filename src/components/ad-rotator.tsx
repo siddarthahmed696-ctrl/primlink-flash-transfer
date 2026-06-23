@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ResolvedAd } from "@/lib/ads";
+import { fetchActiveAds, type ResolvedAd } from "@/lib/ads";
 import { supabase } from "@/integrations/supabase/client";
 
 export type AdsSyncStatus = {
@@ -29,15 +29,31 @@ export function useLiveAds(getAds: () => Promise<ResolvedAd[]>): LiveAds {
     let cancelled = false;
     const load = () => {
       getAds()
+        .then(async (next) => {
+          if (next.length) return next;
+          return fetchActiveAds();
+        })
         .then((next) => {
           if (cancelled) return;
           setAds(next);
           setLastSyncedAt(new Date());
           setLastError(null);
         })
-        .catch((err) => {
+        .catch(async (err: unknown) => {
           if (cancelled) return;
-          setLastError(err?.message ?? String(err));
+          try {
+            const next = await fetchActiveAds();
+            if (cancelled) return;
+            setAds(next);
+            setLastSyncedAt(new Date());
+            const message = err instanceof Error ? err.message : String(err);
+            setLastError(next.length ? null : message);
+          } catch (fallbackErr: unknown) {
+            if (cancelled) return;
+            const fallbackMessage = fallbackErr instanceof Error ? fallbackErr.message : null;
+            const message = err instanceof Error ? err.message : String(err);
+            setLastError(fallbackMessage ?? message);
+          }
         });
     };
     load();
