@@ -7,12 +7,12 @@ export const Route = createFileRoute("/subscription")({
       { title: "Subscription — V Move You" },
       {
         name: "description",
-        content: "Upgrade V Move You for larger file transfers beyond the free 100 MB limit.",
+        content: "Upgrade V Move You for larger file transfers beyond the free 800 MB limit.",
       },
       { property: "og:title", content: "Subscription — V Move You" },
       {
         property: "og:description",
-        content: "Upgrade V Move You for larger file transfers beyond the free 100 MB limit.",
+        content: "Upgrade V Move You for larger file transfers beyond the free 800 MB limit.",
       },
     ],
     links: [{ rel: "canonical", href: "https://primlink-flash-transfer.lovable.app/subscription" }],
@@ -36,7 +36,7 @@ function SubscriptionPage() {
               Send larger files with V Move You Pro
             </h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
-              Free transfers support up to 100 MB. Upgrade when you need bigger uploads,
+              Free transfers support up to 800 MB. Upgrade when you need bigger uploads,
               faster sharing, and more room for video, design, and business files.
             </p>
           </div>
