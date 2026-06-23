@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
+import { AdsSyncStatusIndicator, useLiveAds } from "@/components/ad-rotator";
+import { listActiveAdsSigned } from "@/lib/ads.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { updateAdMetadata } from "@/lib/admin.functions";
 import {
