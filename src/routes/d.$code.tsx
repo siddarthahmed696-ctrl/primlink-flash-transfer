@@ -102,21 +102,9 @@ function DownloadPage() {
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
   const startDownload = async (fileId: string, fileName: string) => {
-    const { data, error } = await supabase.rpc("get_download_path", {
-      _code: code,
-      _file_id: fileId,
-    } as never);
-    const row = (Array.isArray(data) ? data[0] : data) as
-      | { storage_path: string; file_name: string }
-      | null;
-    if (error || !row) throw new Error("File not found or expired");
-    const { data: signed, error: signErr } = await supabase.storage
-      .from("transfers")
-      .createSignedUrl(row.storage_path, 600, { download: fileName });
-    if (signErr || !signed?.signedUrl) throw new Error("Could not start download");
-    await supabase.rpc("increment_download_count", { _code: code } as never);
+    const url = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(fileId)}`;
     const a = document.createElement("a");
-    a.href = signed.signedUrl;
+    a.href = url;
     a.download = fileName;
     document.body.appendChild(a);
     a.click();
