@@ -72,15 +72,6 @@ export const Route = createFileRoute("/d/$code")({
 
 const ACCENT = "#2563eb";
 
-function getDownloadBaseUrl(): string {
-  if (typeof window === "undefined") return "";
-  const host = window.location.host;
-  if (host.includes("id-preview--") || host.includes("lovableproject.com")) {
-    return "https://primlink-flash-transfer.lovable.app";
-  }
-  return window.location.origin;
-}
-
 function DownloadPage() {
   const { code } = Route.useParams();
   const [transfer, setTransfer] = useState<TransferRow | null>(null);
@@ -111,7 +102,7 @@ function DownloadPage() {
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
   const startDownload = async (fileId: string, fileName: string) => {
-    const url = `${getDownloadBaseUrl()}/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(fileId)}`;
+    const url = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(fileId)}`;
     const a = document.createElement("a");
     a.href = url;
     a.download = fileName;
