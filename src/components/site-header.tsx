@@ -64,8 +64,11 @@ export function SiteHeader() {
 
   return (
     <header className="relative z-30 bg-transparent">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <BouncingBrand />
+      </div>
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:h-20 sm:px-6">
-        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center overflow-visible">
+        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center overflow-visible relative z-10">
           <span
             className="inline-block"
             style={{
@@ -77,11 +80,9 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <div className="hidden sm:flex justify-center">
-          <BouncingBrand />
-        </div>
+        <div />
 
-        <div className="flex shrink-0 items-center justify-end">
+        <div className="flex shrink-0 items-center justify-end relative z-10">
           <nav className="hidden sm:flex items-center gap-6">{links}</nav>
           <button
             type="button"
