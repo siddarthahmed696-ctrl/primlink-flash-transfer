@@ -16,13 +16,13 @@ function BouncingBrand() {
   return (
     <div className="pointer-events-none select-none flex items-baseline gap-2 text-2xl sm:text-3xl font-extrabold tracking-tight">
       {step >= 0 && (
-        <span key={`v-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)]`}>V</span>
+        <span key={`v-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:1.5px_white]`}>V</span>
       )}
       {step >= 1 && (
-        <span key={`m-${step}`} className={`${wordCls} text-black`}>Move</span>
+        <span key={`m-${step}`} className={`${wordCls} text-black [-webkit-text-stroke:1.5px_white]`}>Move</span>
       )}
       {step >= 2 && (
-        <span key={`y-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)]`}>You</span>
+        <span key={`y-${step}`} className={`${wordCls} text-blue-500 drop-shadow-[0_2px_6px_rgba(59,130,246,0.5)] [-webkit-text-stroke:1.5px_white]`}>You</span>
       )}
       <style>{`
         @keyframes ut_bounce {
@@ -68,13 +68,16 @@ export function SiteHeader() {
         <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center overflow-visible">
           <span
             className="inline-block"
-            style={{ animation: "ut_spin 8s linear infinite" }}
+            style={{
+              animation: "ut_shake 2.5s ease-in-out infinite",
+              filter: "drop-shadow(0 -1.5px 0 white) drop-shadow(0 1.5px 0 white) drop-shadow(-1.5px 0 0 white) drop-shadow(1.5px 0 0 white)",
+            }}
           >
             <UTransferLogo size={64} sizes="(max-width: 640px) 48px, 64px" className="h-12 w-12 shrink-0 sm:h-16 sm:w-16" />
           </span>
         </Link>
 
-        <div className="flex justify-center">
+        <div className="hidden sm:flex justify-center">
           <BouncingBrand />
         </div>
 
