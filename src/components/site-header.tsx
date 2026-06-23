@@ -5,36 +5,34 @@ import { UTransferLogo } from "./vmoveyou-logo";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const linkCls = "text-sm text-white/70 hover:text-white transition-colors";
+  const linkCls = "text-sm text-slate-700 hover:text-blue-600 transition-colors";
+  const activeCls = "text-blue-600 font-semibold";
   const links = (
     <>
-      <Link to="/blog" className={linkCls} activeProps={{ className: "text-white font-medium" }} onClick={() => setOpen(false)}>
+      <Link to="/blog" className={linkCls} activeProps={{ className: activeCls }} onClick={() => setOpen(false)}>
         Blog
       </Link>
-      <Link to="/history" className={linkCls} activeProps={{ className: "text-white font-medium" }} onClick={() => setOpen(false)}>
+      <Link to="/history" className={linkCls} activeProps={{ className: activeCls }} onClick={() => setOpen(false)}>
         History
       </Link>
-      <Link to="/privacy" className={linkCls} activeProps={{ className: "text-white font-medium" }} onClick={() => setOpen(false)}>
+      <Link to="/privacy" className={linkCls} activeProps={{ className: activeCls }} onClick={() => setOpen(false)}>
         Privacy Policy
       </Link>
     </>
   );
 
   return (
-    <header className="relative z-30">
+    <header className="relative z-30 bg-white border-b border-slate-200 shadow-sm">
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 sm:flex sm:h-20 sm:justify-between sm:px-6">
-        <Link
-          to="/"
-          aria-label="V Move You"
-          className="flex min-w-0 items-center overflow-visible"
-        >
-          <UTransferLogo size={80} sizes="(max-width: 640px) 64px, 80px" className="h-16 w-16 shrink-0 sm:h-20 sm:w-20 drop-shadow-[0_8px_24px_rgba(37,99,235,0.45)]" />
+        <Link to="/" aria-label="V Move You" className="flex min-w-0 items-center gap-2 overflow-visible">
+          <UTransferLogo size={72} sizes="(max-width: 640px) 56px, 72px" className="h-14 w-14 shrink-0 sm:h-[72px] sm:w-[72px]" />
+          <span className="truncate text-base sm:text-lg font-bold text-slate-900">V Move You</span>
         </Link>
         <div className="flex shrink-0 items-center">
-          <nav className="hidden sm:flex items-center gap-5">{links}</nav>
+          <nav className="hidden sm:flex items-center gap-6">{links}</nav>
           <button
             type="button"
-            className="sm:hidden text-white p-2 -mr-2"
+            className="sm:hidden text-slate-800 p-2 -mr-2"
             aria-label="Menu"
             onClick={() => setOpen((v) => !v)}
           >
@@ -43,7 +41,7 @@ export function SiteHeader() {
         </div>
       </div>
       {open && (
-        <div className="sm:hidden border-t border-white/10 bg-gradient-to-b from-black via-[#0a0a1a] to-blue-900/90 backdrop-blur">
+        <div className="sm:hidden border-t border-slate-200 bg-white">
           <nav className="mx-auto max-w-7xl px-4 py-3 flex flex-col gap-3">{links}</nav>
         </div>
       )}
