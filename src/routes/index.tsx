@@ -29,16 +29,16 @@ import { saveTransferHistory } from "@/lib/transfers";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "V Move You — Send files up to 100 MB free" },
+      { title: "V Move You — Send files up to 800 MB free" },
       {
         name: "description",
         content:
-          "Upload up to 100 MB and share a download link instantly. No login, no signup. Powered by V Move You.",
+          "Upload up to 800 MB and share a download link instantly. No login, no signup. Powered by V Move You.",
       },
-      { property: "og:title", content: "V Move You — Send files up to 100 MB free" },
+      { property: "og:title", content: "V Move You — Send files up to 800 MB free" },
       {
         property: "og:description",
-        content: "Send up to 100 MB files with one share link. Free and fast.",
+        content: "Send up to 800 MB files with one share link. Free and fast.",
       },
       { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/" },
     ],
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const MAX_BYTES = 100 * 1024 * 1024;
+const MAX_BYTES = 800 * 1024 * 1024;
 const SUBSCRIPTION_REDIRECT_BYTES = 500 * 1024 * 1024;
 const ACCENT = "#2563eb";
 
@@ -295,7 +295,7 @@ function HomePage() {
                   <div className="text-[11px] uppercase tracking-widest text-white/60">
                     Send up to
                   </div>
-                  <div className="font-display text-xl font-bold text-white">100 MB free</div>
+                  <div className="font-display text-xl font-bold text-white">800 MB free</div>
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-2">
@@ -427,7 +427,7 @@ function HomePage() {
                     )}
                   </button>
                   {overLimit && (
-                    <p className="text-[11px] text-white text-center">Exceeds 100 MB free limit</p>
+                    <p className="text-[11px] text-white text-center">Exceeds 800 MB free limit</p>
                   )}
                 </div>
               </>

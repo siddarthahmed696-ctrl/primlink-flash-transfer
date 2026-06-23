@@ -23,7 +23,7 @@ const posts = [
     body: [
       "V Move You was built on a single idea: sending a large file to another human should not require an account, a credit card or a download client. You drop your files, you get a link, you share it. That's it.",
       "Behind the simple front door is a serious pipeline. Every transfer is uploaded in resumable chunks straight to V Move You's edge storage, so a flaky coffee-shop Wi-Fi connection won't cost you a 9 GB re-upload. Each link is unique, expirable and revocable from your browser.",
-      "We give every visitor 100 MB per transfer for free, and we don't gate downloads behind ads, banners or signup walls. Recipients click, they get the file.",
+      "We give every visitor 800 MB per transfer for free, and we don't gate downloads behind ads, banners or signup walls. Recipients click, they get the file.",
     ],
   },
   {

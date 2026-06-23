@@ -4,20 +4,20 @@ import { Zap, Globe2, ShieldCheck, Check, X, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/alternatives/wetransfer")({
   head: () => ({
     meta: [
-      { title: "Best WeTransfer Alternative — 100 MB Free | V Move You" },
+      { title: "Best WeTransfer Alternative — 800 MB Free | V Move You" },
       {
         name: "description",
         content:
-          "Looking for a WeTransfer alternative? V Move You Transfer offers 100 MB free, no account required, and instant worldwide sharing. Try it now.",
+          "Looking for a WeTransfer alternative? V Move You Transfer offers 800 MB free, no account required, and instant worldwide sharing. Try it now.",
       },
       {
         property: "og:title",
-        content: "Best WeTransfer Alternative — 100 MB Free | V Move You",
+        content: "Best WeTransfer Alternative — 800 MB Free | V Move You",
       },
       {
         property: "og:description",
         content:
-          "Send up to 100 MB for free with V Move You. No account, no waiting — just drop files and share the link instantly.",
+          "Send up to 800 MB for free with V Move You. No account, no waiting — just drop files and share the link instantly.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://primlink-flash-transfer.lovable.app/alternatives/wetransfer" },
@@ -55,7 +55,7 @@ function WeTransferAlternativePage() {
             The <span className="text-gradient-red">best WeTransfer alternative</span> for big files.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            V Move You gives you <strong>100 MB free</strong> with no sign-up, no email verification, and instant links. Just drop files and share.
+            V Move You gives you <strong>800 MB free</strong> with no sign-up, no email verification, and instant links. Just drop files and share.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -92,7 +92,7 @@ function WeTransferAlternativePage() {
 
             <ComparisonRow
               feature="Free file limit"
-              primlink="100 MB"
+              primlink="800 MB"
               wetransfer="2 GB"
               highlight
             />
@@ -138,7 +138,7 @@ function WeTransferAlternativePage() {
             <ReasonCard
               icon={<Zap className="size-5" />}
               title="Fast free transfers"
-              body="V Move You lets you send up to 100 MB without paying a cent — perfect for documents, images, small videos, and everyday sharing."
+              body="V Move You lets you send up to 800 MB without paying a cent — perfect for documents, images, small videos, and everyday sharing."
             />
             <ReasonCard
               icon={<Globe2 className="size-5" />}
@@ -159,7 +159,7 @@ function WeTransferAlternativePage() {
           <div className="space-y-4">
             <FaqItem
               question="Is V Move You really a free WeTransfer alternative?"
-              answer="Yes. V Move You is completely free for transfers up to 100 MB. Larger transfers can move to a subscription plan."
+              answer="Yes. V Move You is completely free for transfers up to 800 MB. Larger transfers can move to a subscription plan."
             />
             <FaqItem
               question="Do recipients need an account to download?"
@@ -191,7 +191,7 @@ function WeTransferAlternativePage() {
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-8 py-3 rounded-lg hover:bg-primary-glow transition-colors glow-red"
               >
                 <Zap className="size-4" />
-                Start your first 100 MB transfer
+                Start your first 800 MB transfer
               </Link>
             </div>
           </div>

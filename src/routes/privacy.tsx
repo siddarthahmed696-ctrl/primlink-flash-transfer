@@ -26,7 +26,7 @@ function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold text-foreground">1. What V Move You does</h2>
             <p className="mt-2">
-              V Move You lets users upload files up to 100 MB and create a shareable download link.
+              V Move You lets users upload files up to 800 MB and create a shareable download link.
               The service is designed for temporary file sharing, not permanent storage. No account is
               required to create a standard transfer link.
             </p>
