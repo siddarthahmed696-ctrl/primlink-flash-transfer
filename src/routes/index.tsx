@@ -234,13 +234,17 @@ function HomePage() {
       });
       setShareUrl(url);
       toast.success("Transfer ready!");
-    } catch (e) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error("Upload failed. Please try again.");
+      const msg =
+        (e as { message?: string } | null)?.message ||
+        (typeof e === "string" ? e : "Upload failed. Please try again.");
+      toast.error(msg);
 
     } finally {
       setUploading(false);
     }
+
   };
 
   const copyLink = async () => {
