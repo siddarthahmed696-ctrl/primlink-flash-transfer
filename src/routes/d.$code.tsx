@@ -27,45 +27,14 @@ interface FileRow {
 }
 
 export const Route = createFileRoute("/d/$code")({
-  head: ({ params }) => ({
+  head: () => ({
     meta: [
       { title: `Download files · V Move You Transfer` },
-      {
-        name: "description",
-        content: `Someone shared files with you on V Move You Transfer. Tap to download.`,
-      },
-      { property: "og:title", content: "Files shared with you" },
-      {
-        property: "og:description",
-        content: "Download the files shared via V Move You Transfer.",
-      },
+      { name: "description", content: `Someone shared files with you on V Move You Transfer. Tap to download.` },
       { name: "robots", content: "noindex" },
     ],
   }),
   component: DownloadPage,
-  notFoundComponent: () => (
-    <ShellMessage title="Link not found" body="This transfer link does not exist or was removed." />
-  ),
-  errorComponent: ({ reset }) => {
-    const router = useRouter();
-    return (
-      <ShellMessage
-        title="Something went wrong"
-        body="We couldn't load this transfer. Please try again."
-        action={
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary-glow"
-          >
-            Try again
-          </button>
-        }
-      />
-    );
-  },
 });
 
 const ACCENT = "#2563eb";
@@ -81,9 +50,8 @@ function DownloadPage() {
   useEffect(() => {
     (async () => {
       try {
-        // Supabase RPC hatakar direct Hostinger PHP Backend endpoint connect kiya hai
         const data = await apiJson<{ transfer: TransferRow; files: FileRow[] }>(
-          `/get_transfer.php?code=${encodeURIComponent(code)}`,
+          `/get_transfer.php?code=${encodeURIComponent(code)}`
         );
         setTransfer(data.transfer);
         setFiles(data.files || []);
@@ -99,7 +67,6 @@ function DownloadPage() {
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
   const startDownload = (fileId: string) => {
-    // Secure Network bypass: browser window direct direct download php stream hit karegi
     window.location.href = downloadUrl(code, fileId);
   };
 
@@ -118,12 +85,8 @@ function DownloadPage() {
     setDownloadingAll(true);
     try {
       for (const f of files) {
-        try {
-          startDownload(f.id);
-          await new Promise((r) => setTimeout(r, 1000)); // Rate-limiting delay
-        } catch (e) {
-          console.error(e);
-        }
+        startDownload(f.id);
+        await new Promise((r) => setTimeout(r, 1000));
       }
     } finally {
       setDownloadingAll(false);
@@ -142,10 +105,12 @@ function DownloadPage() {
 
   if (!transfer) {
     return (
-      <ShellMessage
-        title="Link not found"
-        body="This transfer link does not exist or was removed."
-      />
+      <Shell>
+        <div className="mx-auto max-w-md text-center py-24 px-6">
+          <h1 className="text-2xl font-bold text-white">Link not found</h1>
+          <p className="mt-2 text-white/70">This transfer link does not exist or was removed.</p>
+        </div>
+      </Shell>
     );
   }
 
@@ -153,11 +118,10 @@ function DownloadPage() {
     <Shell>
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
         <div
-          className="rounded-2xl border border-white/15 overflow-hidden animate-[ut_in_700ms_ease-out_both]"
+          className="rounded-2xl border border-white/15 overflow-hidden"
           style={{
             background: "transparent",
             backdropFilter: "blur(20px) saturate(140%)",
-            WebkitBackdropFilter: "blur(20px) saturate(140%)",
             boxShadow: "0 30px 80px -20px rgba(0,0,0,0.6)",
           }}
         >
@@ -182,8 +146,7 @@ function DownloadPage() {
               </p>
             )}
             <div className="mt-5 text-sm text-white/70">
-              {files.length} {files.length === 1 ? "file" : "files"} ·{" "}
-              {formatBytes(transfer.total_size)}
+              {files.length} {files.length === 1 ? "file" : "files"} · {formatBytes(transfer.total_size)}
             </div>
           </div>
 
@@ -192,24 +155,19 @@ function DownloadPage() {
               {files.length === 1 ? (
                 <a
                   href={downloadUrl(code, files[0].id)}
-                  className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg transition hover:opacity-90 text-center"
-                  style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
+                  className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg text-center"
+                  style={{ background: ACCENT }}
                 >
-                  <Download className="size-4" />
-                  Download ({formatBytes(transfer.total_size)})
+                  <Download className="size-4" /> Download ({formatBytes(transfer.total_size)})
                 </a>
               ) : (
                 <button
                   onClick={downloadAll}
                   disabled={downloadingAll}
                   className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg transition disabled:opacity-60"
-                  style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
+                  style={{ background: ACCENT }}
                 >
-                  {downloadingAll ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Download className="size-4" />
-                  )}
+                  {downloadingAll ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
                   Download all ({formatBytes(transfer.total_size)})
                 </button>
               )}
@@ -218,46 +176,24 @@ function DownloadPage() {
 
           <ul className="divide-y divide-white/10">
             {files.map((f) => (
-              <li
-                key={f.id}
-                className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-white/5"
-              >
+              <li key={f.id} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-white/5">
                 <FileIcon className="size-5 text-white/80 shrink-0" />
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-medium text-white">{f.file_name}</div>
                   <div className="text-xs text-white/60">{formatBytes(f.file_size)}</div>
                 </div>
                 {expired ? (
-                  <button
-                    disabled
-                    className="inline-flex items-center gap-1.5 bg-black/30 border border-white/10 text-sm text-white px-3 py-1.5 rounded-md opacity-50"
-                  >
-                    <Download className="size-3.5" />
-                    Download
-                  </button>
+                  <button disabled className="bg-black/30 text-sm text-white px-3 py-1.5 rounded-md opacity-50">Expired</button>
                 ) : (
-                  <button
-                    onClick={() => downloadOne(f)}
-                    disabled={downloadingId === f.id}
-                    className="inline-flex items-center gap-1.5 bg-black/30 border border-white/15 hover:border-white/40 text-sm text-white px-3 py-1.5 rounded-md transition disabled:opacity-60"
-                  >
-                    {downloadingId === f.id ? (
-                      <Loader2 className="size-3.5 animate-spin" />
-                    ) : (
-                      <Download className="size-3.5" />
-                    )}
-                    Download
+                  <button onClick={() => downloadOne(f)} disabled={downloadingId === f.id} className="bg-black/30 text-sm text-white px-3 py-1.5 rounded-md">
+                    {downloadingId === f.id ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />} Download
                   </button>
                 )}
               </li>
             ))}
           </ul>
         </div>
-
-        <Link
-          to="/"
-          className="mt-6 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white"
-        >
+        <Link to="/" className="mt-6 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">
           <ArrowLeft className="size-4" /> Send your own transfer
         </Link>
       </div>
@@ -269,7 +205,6 @@ function Shell({ children }: { children: React.ReactNode }) {
   const getAds = useServerFn(listActiveAdsSigned);
   const { ads, status: adsStatus } = useLiveAds(getAds);
   const ad = useAdRotator(ads, 30_000) ?? FALLBACK_AD;
-
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       <AdBackdrop ad={ad} />
@@ -278,3 +213,6 @@ function Shell({ children }: { children: React.ReactNode }) {
         <SiteHeader />
         <main className="flex-1">{children}</main>
       </div>
+    </div>
+  );
+}
