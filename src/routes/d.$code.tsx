@@ -2,7 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
-import { apiJson, downloadUrl } from "@/lib/api";
+import { apiJson, downloadUrl } from "@/lib/api/api";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
