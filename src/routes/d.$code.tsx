@@ -2,12 +2,32 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
-import { apiJson } from "@/lib/api";
-import { downloadUrl } from "./api.public.download.$code.$fileId";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
 import { listActiveAdsSigned } from "@/lib/ads.functions";
+
+// Hostinger PHP Backend Ka Absolute base URL
+const API_BASE = "https://vmoveyou.com";
+
+// apiJson function ko direct isi file mein local bana diya taake import crash na ho
+async function apiJsonLocal<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      "Accept": "application/json",
+      ...(init?.headers as Record<string, string> | undefined)
+    }
+  });
+  const text = await res.text();
+  let data: unknown = null;
+  try { data = text ? JSON.parse(text) : null; } catch { /* ignore */ }
+  if (!res.ok) {
+    const msg = (data as { error?: string } | null)?.error || `Request failed (${res.status})`;
+    throw new Error(msg);
+  }
+  return data as T;
+}
 
 interface TransferRow {
   id: string;
@@ -51,7 +71,7 @@ function DownloadPage() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await apiJson<{ transfer: TransferRow; files: FileRow[] }>(
+        const data = await apiJsonLocal<{ transfer: TransferRow; files: FileRow[] }>(
           `/get_transfer.php?code=${encodeURIComponent(code)}`
         );
         setTransfer(data.transfer);
@@ -68,7 +88,7 @@ function DownloadPage() {
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
   const startDownload = (fileId: string) => {
-    window.location.href = downloadUrl(code, fileId);
+    window.location.href = `${API_BASE}/download.php?code=${encodeURIComponent(code)}&file_id=${encodeURIComponent(fileId)}`;
   };
 
   const downloadOne = async (f: FileRow) => {
@@ -155,7 +175,7 @@ function DownloadPage() {
             <div className="p-4 border-b border-white/10">
               {files.length === 1 ? (
                 <a
-                  href={downloadUrl(code, files[0].id)}
+                  href={`${API_BASE}/download.php?code=${encodeURIComponent(code)}&file_id=${encodeURIComponent(files[0].id)}`}
                   className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg text-center"
                   style={{ background: ACCENT }}
                 >
