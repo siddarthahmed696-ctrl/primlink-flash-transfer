@@ -2,8 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
-import { apiJson } from "../lib/api"; 
-// Direct isi routes folder ke andar maujud file ka absolute path link
+import { apiJson } from "@/lib/api";
 import { downloadUrl } from "./api.public.download.$code.$fileId";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
