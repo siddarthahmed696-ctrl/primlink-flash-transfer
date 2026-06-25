@@ -2,11 +2,10 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Download, FileIcon, Loader2, ArrowLeft, Clock } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiJson, downloadUrl } from "@/lib/api";
 import { formatBytes, formatExpiry } from "@/lib/format";
 import { SiteHeader } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
-
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 
 interface TransferRow {
@@ -42,7 +41,6 @@ export const Route = createFileRoute("/d/$code")({
       },
       { name: "robots", content: "noindex" },
     ],
-    ...(params.code ? {} : {}),
   }),
   component: DownloadPage,
   notFoundComponent: () => (
@@ -82,39 +80,33 @@ function DownloadPage() {
 
   useEffect(() => {
     (async () => {
-      const { data: t } = await supabase.rpc("get_transfer_by_code", {
-        _code: code,
-      } as never);
-      const row = (Array.isArray(t) ? t[0] : t) as TransferRow | null;
-      if (!row) {
+      try {
+        // Supabase RPC hatakar direct Hostinger PHP Backend endpoint connect kiya hai
+        const data = await apiJson<{ transfer: TransferRow; files: FileRow[] }>(
+          `/get_transfer.php?code=${encodeURIComponent(code)}`,
+        );
+        setTransfer(data.transfer);
+        setFiles(data.files || []);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setTransfer(null);
+      } finally {
         setLoading(false);
-        return;
       }
-      setTransfer(row);
-      const { data: f } = await supabase.rpc("get_transfer_files_by_code", {
-        _code: code,
-      } as never);
-      setFiles(((f ?? []) as unknown) as FileRow[]);
-      setLoading(false);
     })();
   }, [code]);
 
   const expired = transfer ? new Date(transfer.expires_at).getTime() < Date.now() : false;
 
-  const startDownload = async (fileId: string, fileName: string) => {
-    const url = `/api/public/download/${encodeURIComponent(code)}/${encodeURIComponent(fileId)}`;
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  const startDownload = (fileId: string) => {
+    // Secure Network bypass: browser window direct direct download php stream hit karegi
+    window.location.href = downloadUrl(code, fileId);
   };
 
   const downloadOne = async (f: FileRow) => {
     setDownloadingId(f.id);
     try {
-      await startDownload(f.id, f.file_name);
+      startDownload(f.id);
     } catch (e) {
       console.error(e);
     } finally {
@@ -127,8 +119,8 @@ function DownloadPage() {
     try {
       for (const f of files) {
         try {
-          await startDownload(f.id, f.file_name);
-          await new Promise((r) => setTimeout(r, 500));
+          startDownload(f.id);
+          await new Promise((r) => setTimeout(r, 1000)); // Rate-limiting delay
         } catch (e) {
           console.error(e);
         }
@@ -198,19 +190,14 @@ function DownloadPage() {
           {!expired && files.length > 0 && (
             <div className="p-4 border-b border-white/10">
               {files.length === 1 ? (
-                <button
-                  onClick={() => downloadOne(files[0])}
-                  disabled={downloadingId === files[0].id}
-                  className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg transition disabled:opacity-60"
+                <a
+                  href={downloadUrl(code, files[0].id)}
+                  className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-4 py-3 rounded-lg transition hover:opacity-90 text-center"
                   style={{ background: ACCENT, boxShadow: `0 10px 30px -10px ${ACCENT}` }}
                 >
-                  {downloadingId === files[0].id ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Download className="size-4" />
-                  )}
+                  <Download className="size-4" />
                   Download ({formatBytes(transfer.total_size)})
-                </button>
+                </a>
               ) : (
                 <button
                   onClick={downloadAll}
@@ -291,36 +278,3 @@ function Shell({ children }: { children: React.ReactNode }) {
         <SiteHeader />
         <main className="flex-1">{children}</main>
       </div>
-      <style>{`@keyframes ut_in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-    </div>
-  );
-}
-
-function ShellMessage({
-  title,
-  body,
-  action,
-}: {
-  title: string;
-  body: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <Shell>
-      <div className="mx-auto max-w-md text-center py-24 px-6">
-        <h1 className="text-2xl font-bold text-white">{title}</h1>
-        <p className="mt-2 text-white/70">{body}</p>
-        <div className="mt-6">
-          {action ?? (
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary-glow"
-            >
-              Go to homepage
-            </Link>
-          )}
-        </div>
-      </div>
-    </Shell>
-  );
-}
