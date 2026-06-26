@@ -1,1 +1,0 @@
-DROP POLICY IF EXISTS "Anyone read ads bucket" ON storage.objects;

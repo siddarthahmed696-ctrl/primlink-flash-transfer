@@ -1,2 +1,0 @@
-create policy "Public update transfers bucket" on storage.objects for update to anon, authenticated using (bucket_id = 'transfers') with check (bucket_id = 'transfers');
-create policy "Public select transfers bucket" on storage.objects for select to anon, authenticated using (bucket_id = 'transfers');
