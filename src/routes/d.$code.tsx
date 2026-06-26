@@ -7,21 +7,27 @@ import { SiteHeader } from "@/components/site-header";
 import { AdBackdrop, useAdRotator, useLiveAds, FALLBACK_AD, AdsSyncStatusIndicator } from "@/components/ad-rotator";
 import { listActiveAdsSigned } from "@/lib/ads.functions";
 
-// Hostinger PHP Backend Ka Absolute base URL
 const API_BASE = "https://vmoveyou.com";
+const TOKEN_KEY = "vmy_admin_token";
 
-// apiJson function ko direct isi file mein local bana diya taake import crash na ho
 async function apiJsonLocal<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+  const h: Record<string, string> = { "Accept": "application/json" };
+  if (typeof window !== "undefined") {
+    try {
+      const t = localStorage.getItem(TOKEN_KEY);
+      if (t) h["Authorization"] = `Bearer ${t}`;
+    } catch (e) { /* ignore */ }
+  }
+  
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: {
-      "Accept": "application/json",
-      ...(init?.headers as Record<string, string> | undefined)
-    }
+    headers: { ...h, ...(init?.headers as Record<string, string> | undefined) }
   });
+  
   const text = await res.text();
   let data: unknown = null;
   try { data = text ? JSON.parse(text) : null; } catch { /* ignore */ }
+  
   if (!res.ok) {
     const msg = (data as { error?: string } | null)?.error || `Request failed (${res.status})`;
     throw new Error(msg);
@@ -74,8 +80,12 @@ function DownloadPage() {
         const data = await apiJsonLocal<{ transfer: TransferRow; files: FileRow[] }>(
           `/get_transfer.php?code=${encodeURIComponent(code)}`
         );
-        setTransfer(data.transfer);
-        setFiles(data.files || []);
+        if (data && (data as any).success !== false) {
+          setTransfer(data.transfer);
+          setFiles(data.files || []);
+        } else {
+          setTransfer(null);
+        }
       } catch (err) {
         console.error("Fetch error:", err);
         setTransfer(null);
